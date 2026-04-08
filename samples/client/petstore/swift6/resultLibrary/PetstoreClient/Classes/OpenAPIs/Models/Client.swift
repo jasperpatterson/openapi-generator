@@ -27,3 +27,9 @@ internal struct Client: Sendable, Codable {
     }
 }
 
+
+extension Client: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

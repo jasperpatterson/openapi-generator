@@ -44,3 +44,11 @@ internal struct EnumArrays: Codable, JSONEncodable {
     }
 }
 
+
+extension EnumArrays: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        if justSymbol == .unknownDefaultOpenApi { return true }
+        if arrayEnum == .unknownDefaultOpenApi { return true }
+        return false
+    }
+}

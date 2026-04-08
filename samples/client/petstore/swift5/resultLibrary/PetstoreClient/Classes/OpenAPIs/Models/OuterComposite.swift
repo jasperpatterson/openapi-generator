@@ -38,3 +38,9 @@ internal struct OuterComposite: Codable, JSONEncodable {
     }
 }
 
+
+extension OuterComposite: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

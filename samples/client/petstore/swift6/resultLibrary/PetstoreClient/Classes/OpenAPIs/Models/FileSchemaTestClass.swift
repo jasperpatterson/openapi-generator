@@ -31,3 +31,9 @@ internal struct FileSchemaTestClass: Sendable, Codable {
     }
 }
 
+
+extension FileSchemaTestClass: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

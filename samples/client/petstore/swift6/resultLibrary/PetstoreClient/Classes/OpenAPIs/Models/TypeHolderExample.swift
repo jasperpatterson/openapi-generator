@@ -43,3 +43,9 @@ internal struct TypeHolderExample: Sendable, Codable {
     }
 }
 
+
+extension TypeHolderExample: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

@@ -47,3 +47,9 @@ internal struct StringBooleanMap: Sendable, Codable {
     }
 }
 
+
+extension StringBooleanMap: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

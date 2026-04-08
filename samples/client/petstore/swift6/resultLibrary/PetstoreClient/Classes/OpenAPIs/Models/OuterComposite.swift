@@ -35,3 +35,9 @@ internal struct OuterComposite: Sendable, Codable {
     }
 }
 
+
+extension OuterComposite: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

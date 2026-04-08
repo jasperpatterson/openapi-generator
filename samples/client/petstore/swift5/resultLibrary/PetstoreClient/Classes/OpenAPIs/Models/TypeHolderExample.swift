@@ -46,3 +46,9 @@ internal struct TypeHolderExample: Codable, JSONEncodable {
     }
 }
 
+
+extension TypeHolderExample: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

@@ -31,3 +31,9 @@ internal struct HasOnlyReadOnly: Sendable, Codable {
     }
 }
 
+
+extension HasOnlyReadOnly: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

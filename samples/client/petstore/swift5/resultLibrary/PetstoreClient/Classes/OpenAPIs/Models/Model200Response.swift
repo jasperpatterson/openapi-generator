@@ -35,3 +35,9 @@ internal struct Model200Response: Codable, JSONEncodable {
     }
 }
 
+
+extension Model200Response: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

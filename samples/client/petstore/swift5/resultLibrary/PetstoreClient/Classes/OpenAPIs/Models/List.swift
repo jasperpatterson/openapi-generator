@@ -30,3 +30,9 @@ internal struct List: Codable, JSONEncodable {
     }
 }
 
+
+extension List: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

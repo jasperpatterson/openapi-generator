@@ -51,3 +51,9 @@ internal struct Capitalization: Codable, JSONEncodable {
     }
 }
 
+
+extension Capitalization: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

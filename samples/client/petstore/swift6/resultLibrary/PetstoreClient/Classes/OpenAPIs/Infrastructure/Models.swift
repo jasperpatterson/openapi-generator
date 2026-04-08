@@ -35,6 +35,13 @@ extension CaseIterableDefaultsLast {
     }
 }
 
+/// Protocol for types used as oneOf variants, allowing the oneOf decoder to reject
+/// a variant that only decoded successfully because CaseIterableDefaultsLast
+/// silently accepted an unknown enum value.
+protocol UnknownCaseCheckable {
+    var containsUnknownDefaultOpenApiCase: Bool { get }
+}
+
 /// A flexible type that can be encoded (`.encodeNull` or `.encodeValue`)
 /// or not encoded (`.encodeNothing`). Intended for request payloads.
 internal enum NullEncodable<Wrapped> {

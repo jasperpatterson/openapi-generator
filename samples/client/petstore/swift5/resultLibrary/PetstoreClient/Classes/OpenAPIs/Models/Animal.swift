@@ -34,3 +34,9 @@ internal struct Animal: Codable, JSONEncodable {
     }
 }
 
+
+extension Animal: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

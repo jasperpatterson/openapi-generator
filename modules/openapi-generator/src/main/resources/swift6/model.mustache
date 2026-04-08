@@ -26,4 +26,36 @@ extension {{projectName}}API {
 }
 {{/swiftUseApiNamespace}}{{#models}}{{#model}}{{#vendorExtensions.x-swift-identifiable}}
 extension {{#swiftUseApiNamespace}}{{projectName}}API.{{/swiftUseApiNamespace}}{{{classname}}}: Identifiable {}
-{{/vendorExtensions.x-swift-identifiable}}{{/model}}{{/models}}
+{{/vendorExtensions.x-swift-identifiable}}{{#enumUnknownDefaultCase}}{{^vendorExtensions.x-is-one-of-interface}}{{^isArray}}{{^isEnum}}
+extension {{#swiftUseApiNamespace}}{{projectName}}API.{{/swiftUseApiNamespace}}{{{classname}}}: UnknownCaseCheckable {
+    {{#nonPublicApi}}internal{{/nonPublicApi}}{{^nonPublicApi}}public{{/nonPublicApi}} var containsUnknownDefaultOpenApiCase: Bool {
+        {{#allVars}}
+        {{#isEnum}}
+        {{#vendorExtensions.x-null-encodable}}
+        if {{{name}}} == .encodeValue(.unknownDefaultOpenApi) { return true }
+        {{/vendorExtensions.x-null-encodable}}
+        {{^vendorExtensions.x-null-encodable}}
+        if {{{name}}} == .unknownDefaultOpenApi { return true }
+        {{/vendorExtensions.x-null-encodable}}
+        {{/isEnum}}
+        {{^isEnum}}
+        {{#isEnumRef}}
+        {{#vendorExtensions.x-null-encodable}}
+        if {{{name}}} == .encodeValue(.unknownDefaultOpenApi) { return true }
+        {{/vendorExtensions.x-null-encodable}}
+        {{^vendorExtensions.x-null-encodable}}
+        if {{{name}}} == .unknownDefaultOpenApi { return true }
+        {{/vendorExtensions.x-null-encodable}}
+        {{/isEnumRef}}
+        {{/isEnum}}
+        {{/allVars}}
+        return false
+    }
+}
+{{/isEnum}}{{/isArray}}{{/vendorExtensions.x-is-one-of-interface}}{{#isEnum}}
+extension {{#swiftUseApiNamespace}}{{projectName}}API.{{/swiftUseApiNamespace}}{{{classname}}}: UnknownCaseCheckable {
+    {{#nonPublicApi}}internal{{/nonPublicApi}}{{^nonPublicApi}}public{{/nonPublicApi}} var containsUnknownDefaultOpenApiCase: Bool {
+        self == .unknownDefaultOpenApi
+    }
+}
+{{/isEnum}}{{/enumUnknownDefaultCase}}{{/model}}{{/models}}

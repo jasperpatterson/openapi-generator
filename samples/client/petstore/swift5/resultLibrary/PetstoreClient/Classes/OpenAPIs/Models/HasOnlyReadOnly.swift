@@ -34,3 +34,9 @@ internal struct HasOnlyReadOnly: Codable, JSONEncodable {
     }
 }
 
+
+extension HasOnlyReadOnly: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

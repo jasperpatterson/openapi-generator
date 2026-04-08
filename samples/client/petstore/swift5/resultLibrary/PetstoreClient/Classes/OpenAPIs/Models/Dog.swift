@@ -38,3 +38,9 @@ internal struct Dog: Codable, JSONEncodable {
     }
 }
 
+
+extension Dog: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

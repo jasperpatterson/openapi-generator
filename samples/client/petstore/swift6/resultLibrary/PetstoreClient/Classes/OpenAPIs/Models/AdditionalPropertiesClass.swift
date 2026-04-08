@@ -31,3 +31,9 @@ internal struct AdditionalPropertiesClass: Sendable, Codable {
     }
 }
 
+
+extension AdditionalPropertiesClass: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

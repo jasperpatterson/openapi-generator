@@ -29,3 +29,9 @@ internal struct File: Sendable, Codable {
     }
 }
 
+
+extension File: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

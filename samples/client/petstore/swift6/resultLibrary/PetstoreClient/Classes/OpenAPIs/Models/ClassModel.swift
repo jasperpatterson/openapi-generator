@@ -28,3 +28,9 @@ internal struct ClassModel: Sendable, Codable {
     }
 }
 
+
+extension ClassModel: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

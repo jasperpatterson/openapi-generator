@@ -35,3 +35,9 @@ internal struct Cat: Sendable, Codable {
     }
 }
 
+
+extension Cat: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

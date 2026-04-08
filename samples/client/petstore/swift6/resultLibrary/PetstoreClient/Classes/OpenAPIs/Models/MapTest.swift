@@ -44,3 +44,10 @@ internal struct MapTest: Sendable, Codable {
     }
 }
 
+
+extension MapTest: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        if mapOfEnumString == .unknownDefaultOpenApi { return true }
+        return false
+    }
+}

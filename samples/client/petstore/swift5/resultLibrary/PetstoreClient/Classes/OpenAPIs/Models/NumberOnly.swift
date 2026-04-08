@@ -30,3 +30,9 @@ internal struct NumberOnly: Codable, JSONEncodable {
     }
 }
 
+
+extension NumberOnly: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

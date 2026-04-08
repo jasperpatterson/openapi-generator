@@ -31,3 +31,9 @@ internal struct ClassModel: Codable, JSONEncodable {
     }
 }
 
+
+extension ClassModel: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

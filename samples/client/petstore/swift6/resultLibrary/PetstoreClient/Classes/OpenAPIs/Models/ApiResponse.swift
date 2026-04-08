@@ -35,3 +35,9 @@ internal struct ApiResponse: Sendable, Codable {
     }
 }
 
+
+extension ApiResponse: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}

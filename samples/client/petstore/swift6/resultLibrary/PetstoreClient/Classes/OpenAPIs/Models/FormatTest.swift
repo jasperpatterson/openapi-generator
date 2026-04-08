@@ -82,3 +82,9 @@ internal struct FormatTest: Sendable, Codable {
     }
 }
 
+
+extension FormatTest: UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool {
+        return false
+    }
+}
