@@ -1172,6 +1172,51 @@ public class DefaultCodegenTest {
     }
 
     @Test
+    public void testAllOfWithOneOfRefNoDiscriminator() {
+        final OpenAPI openAPI = TestUtils.parseFlattenSpec("src/test/resources/3_0/allOf_oneOf_noDiscriminator.yaml");
+        DefaultCodegen codegen = new DefaultCodegen();
+        codegen.supportsInheritance = true;
+        codegen.setOpenAPI(openAPI);
+
+        // ParentC uses allOf with a $ref to Child (a oneOf without discriminator).
+        // Child should be recognized as a parent, not flattened.
+        Schema parentCSchema = openAPI.getComponents().getSchemas().get("ParentC");
+        CodegenModel parentCModel = codegen.fromModel("ParentC", parentCSchema);
+        assertEquals("Child", parentCModel.parentSchema);
+        assertEquals("Child", parentCModel.parent);
+
+        // Only the own property "type" should be in vars, not the oneOf variant properties
+        List<String> varNames = parentCModel.vars.stream().map(v -> v.name).collect(Collectors.toList());
+        assertTrue(varNames.contains("type"), "vars should contain 'type'");
+        assertFalse(varNames.contains("xOnlyField"), "vars should not contain variant-specific 'xOnlyField'");
+        assertFalse(varNames.contains("yOnlyField"), "vars should not contain variant-specific 'yOnlyField'");
+        assertFalse(varNames.contains("zOnlyField"), "vars should not contain variant-specific 'zOnlyField'");
+
+        // allVars should also not contain flattened variant properties
+        List<String> allVarNames = parentCModel.allVars.stream().map(v -> v.name).collect(Collectors.toList());
+        assertFalse(allVarNames.contains("xOnlyField"), "allVars should not contain variant-specific 'xOnlyField'");
+        assertFalse(allVarNames.contains("yOnlyField"), "allVars should not contain variant-specific 'yOnlyField'");
+        assertFalse(allVarNames.contains("zOnlyField"), "allVars should not contain variant-specific 'zOnlyField'");
+    }
+
+    @Test
+    public void testAllOfWithOneOfRefNoDiscriminatorNoInheritance() {
+        final OpenAPI openAPI = TestUtils.parseFlattenSpec("src/test/resources/3_0/allOf_oneOf_noDiscriminator.yaml");
+        DefaultCodegen codegen = new DefaultCodegen();
+        codegen.supportsInheritance = false;
+        codegen.setOpenAPI(openAPI);
+
+        // Even without supportsInheritance, variant properties should not be flattened
+        Schema parentCSchema = openAPI.getComponents().getSchemas().get("ParentC");
+        CodegenModel parentCModel = codegen.fromModel("ParentC", parentCSchema);
+
+        List<String> varNames = parentCModel.vars.stream().map(v -> v.name).collect(Collectors.toList());
+        assertFalse(varNames.contains("xOnlyField"), "vars should not contain variant-specific 'xOnlyField'");
+        assertFalse(varNames.contains("yOnlyField"), "vars should not contain variant-specific 'yOnlyField'");
+        assertFalse(varNames.contains("zOnlyField"), "vars should not contain variant-specific 'zOnlyField'");
+    }
+
+    @Test
     public void testAllOfSingleAndDoubleRefWithOwnPropsNoDiscriminator() {
         final OpenAPI openAPI = TestUtils.parseFlattenSpec("src/test/resources/3_0/allOf_composition.yaml");
         final DefaultCodegen codegen = new CodegenWithMultipleInheritance();
