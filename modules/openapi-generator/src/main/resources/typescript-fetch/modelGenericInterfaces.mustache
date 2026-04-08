@@ -1,15 +1,9 @@
 /**
  * {{#lambda.indented_star_1}}{{{unescapedDescription}}}{{/lambda.indented_star_1}}
  * @export
-{{^parentIsOneOf}}
  * @interface {{classname}}
  */
 export interface {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{
-{{/parentIsOneOf}}
-{{#parentIsOneOf}}
- */
-export type {{classname}} = {{{parent}}} & {
-{{/parentIsOneOf}}
 {{#additionalPropertiesType}}
     [key: string]: {{{additionalPropertiesType}}}{{#hasVars}} | any{{/hasVars}};
 {{/additionalPropertiesType}}
@@ -24,7 +18,7 @@ export type {{classname}} = {{{parent}}} & {
      */
     {{#isReadOnly}}readonly {{/isReadOnly}}{{name}}{{^required}}?{{/required}}: {{{datatypeWithEnum}}}{{#isNullable}} | null{{/isNullable}};
 {{/vars}}
-}{{#parentIsOneOf}};{{/parentIsOneOf}}{{#hasEnums}}
+}{{#hasEnums}}
 
 {{#vars}}
 {{#isEnum}}
