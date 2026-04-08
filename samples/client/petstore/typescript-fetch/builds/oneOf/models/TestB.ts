@@ -31,7 +31,7 @@ export interface TestB {
  * Check if a given object implements the TestB interface.
  */
 export function instanceOfTestB(value: object): value is TestB {
-    if (!('bar' in value) || value['bar'] === undefined) return false;
+    if ((!('bar' in value) && !('bar' in value)) || (value['bar'] === undefined && value['bar'] === undefined)) return false;
     return true;
 }
 

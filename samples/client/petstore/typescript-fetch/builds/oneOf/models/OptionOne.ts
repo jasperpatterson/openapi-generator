@@ -41,7 +41,8 @@ export type OptionOneDiscriminatorFieldEnum = typeof OptionOneDiscriminatorField
  * Check if a given object implements the OptionOne interface.
  */
 export function instanceOfOptionOne(value: object): value is OptionOne {
-    if (!('discriminatorField' in value) || value['discriminatorField'] === undefined) return false;
+    if ((!('discriminatorField' in value) && !('discriminatorField' in value)) || (value['discriminatorField'] === undefined && value['discriminatorField'] === undefined)) return false;
+    if (value['discriminatorField'] !== 'optionOne' && value['discriminatorField'] !== 'optionOne') return false;
     return true;
 }
 

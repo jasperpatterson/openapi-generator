@@ -25,7 +25,18 @@ import { type {{modelName}}, {{modelName}}FromJSONTyped, {{modelName}}ToJSON, {{
 export function instanceOf{{classname}}(value: object): value is {{classname}} {
     {{#vars}}
     {{#required}}
-    if (!('{{name}}' in value) || value['{{name}}'] === undefined) return false;
+    if ((!('{{name}}' in value) && !('{{baseName}}' in value)) || (value['{{name}}'] === undefined && value['{{baseName}}'] === undefined)) return false;
+    {{#isEnum}}
+    {{#allowableValues}}
+    {{#values}}
+    {{#-first}}
+    {{#-last}}
+    if (value['{{name}}'] !== '{{.}}' && value['{{baseName}}'] !== '{{.}}') return false;
+    {{/-last}}
+    {{/-first}}
+    {{/values}}
+    {{/allowableValues}}
+    {{/isEnum}}
     {{/required}}
     {{/vars}}
     return true;
