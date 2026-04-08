@@ -50,7 +50,6 @@ internal struct MapTest: Codable, JSONEncodable {
 
 extension MapTest: UnknownCaseCheckable {
     internal var containsUnknownDefaultOpenApiCase: Bool {
-        if mapOfEnumString == .unknownDefaultOpenApi { return true }
         return false
     }
 }

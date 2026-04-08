@@ -35,21 +35,25 @@ extension {{#swiftUseApiNamespace}}{{projectName}}API.{{/swiftUseApiNamespace}}{
     {{#nonPublicApi}}internal{{/nonPublicApi}}{{^nonPublicApi}}public{{/nonPublicApi}} var containsUnknownDefaultOpenApiCase: Bool {
         {{#allVars}}
         {{#isEnum}}
+        {{^isContainer}}
         {{#vendorExtensions.x-null-encodable}}
         if {{{name}}} == .encodeValue(.unknownDefaultOpenApi) { return true }
         {{/vendorExtensions.x-null-encodable}}
         {{^vendorExtensions.x-null-encodable}}
         if {{{name}}} == .unknownDefaultOpenApi { return true }
         {{/vendorExtensions.x-null-encodable}}
+        {{/isContainer}}
         {{/isEnum}}
         {{^isEnum}}
         {{#isEnumRef}}
+        {{^isContainer}}
         {{#vendorExtensions.x-null-encodable}}
         if {{{name}}} == .encodeValue(.unknownDefaultOpenApi) { return true }
         {{/vendorExtensions.x-null-encodable}}
         {{^vendorExtensions.x-null-encodable}}
         if {{{name}}} == .unknownDefaultOpenApi { return true }
         {{/vendorExtensions.x-null-encodable}}
+        {{/isContainer}}
         {{/isEnumRef}}
         {{/isEnum}}
         {{/allVars}}
