@@ -8,9 +8,6 @@ The value may be a shape or the 'null' value. This is introduced in OAS schema >
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-|**shapeType** | **String** |  |  |
-|**triangleType** | **String** |  |  |
-|**quadrilateralType** | **String** |  |  |
 
 
 
