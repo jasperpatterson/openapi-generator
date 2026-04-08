@@ -33,8 +33,11 @@ namespace Org.OpenAPITools.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="NullableShape" /> class.
         /// </summary>
-        /// <param name="triangle"></param>
-        public NullableShape(Triangle triangle)
+        /// <param name="triangle"></param>Error: src/models/FieldValue.ts(168,19): error TS2339: Property 'every' does not exist on type 'never'.
+Error: src/models/FieldValueRequest.ts(104,19): error TS2339: Property 'every' does not exist on type 'never'.
+Error: src/models/TrailMapElementDbOneOf4.ts(29,50): error TS2312: An interface can only extend an object type or intersection of object types with statically known members.
+Error: src/models/TrailMapElementDbOneOf4.ts(81,42): error TS2345: Argument of type 'TrailMapElementDbOneOf4' is not assignable to parameter of type 'PointMarkerElement'.
+        internal NullableShape(Triangle triangle)
         {
             Triangle = triangle;
             OnCreated();
@@ -44,7 +47,7 @@ namespace Org.OpenAPITools.Model
         /// Initializes a new instance of the <see cref="NullableShape" /> class.
         /// </summary>
         /// <param name="quadrilateral"></param>
-        public NullableShape(Quadrilateral quadrilateral)
+        internal NullableShape(Quadrilateral quadrilateral)
         {
             Quadrilateral = quadrilateral;
             OnCreated();
@@ -117,8 +120,6 @@ namespace Org.OpenAPITools.Model
 
             JsonTokenType startingTokenType = utf8JsonReader.TokenType;
 
-            Option<string?> shapeType = default;
-
             Quadrilateral? quadrilateral = null;
             Triangle? triangle = null;
 
@@ -167,20 +168,11 @@ namespace Org.OpenAPITools.Model
 
                     switch (localVarJsonPropertyName)
                     {
-                        case "shapeType":
-                            shapeType = new Option<string?>(utf8JsonReader.GetString()!);
-                            break;
                         default:
                             break;
                     }
                 }
             }
-
-            if (!shapeType.IsSet)
-                throw new ArgumentException("Property is required for class NullableShape.", nameof(shapeType));
-
-            if (shapeType.IsSet && shapeType.Value == null)
-                throw new ArgumentNullException(nameof(shapeType), "Property is not nullable for class NullableShape.");
 
             if (quadrilateral != null)
                 return new NullableShape(quadrilateral);
