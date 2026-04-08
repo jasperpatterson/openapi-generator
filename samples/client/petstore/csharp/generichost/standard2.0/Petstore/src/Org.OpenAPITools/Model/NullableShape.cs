@@ -33,7 +33,7 @@ namespace Org.OpenAPITools.Model
         /// Initializes a new instance of the <see cref="NullableShape" /> class.
         /// </summary>
         /// <param name="triangle"></param>
-        public NullableShape(Triangle triangle)
+        internal NullableShape(Triangle triangle)
         {
             Triangle = triangle;
             OnCreated();
@@ -43,7 +43,7 @@ namespace Org.OpenAPITools.Model
         /// Initializes a new instance of the <see cref="NullableShape" /> class.
         /// </summary>
         /// <param name="quadrilateral"></param>
-        public NullableShape(Quadrilateral quadrilateral)
+        internal NullableShape(Quadrilateral quadrilateral)
         {
             Quadrilateral = quadrilateral;
             OnCreated();
@@ -123,8 +123,6 @@ namespace Org.OpenAPITools.Model
 
             JsonTokenType startingTokenType = utf8JsonReader.TokenType;
 
-            Option<string> shapeType = default;
-
             Quadrilateral quadrilateral = null;
             Triangle triangle = null;
 
@@ -173,20 +171,11 @@ namespace Org.OpenAPITools.Model
 
                     switch (localVarJsonPropertyName)
                     {
-                        case "shapeType":
-                            shapeType = new Option<string>(utf8JsonReader.GetString());
-                            break;
                         default:
                             break;
                     }
                 }
             }
-
-            if (!shapeType.IsSet)
-                throw new ArgumentException("Property is required for class NullableShape.", nameof(shapeType));
-
-            if (shapeType.IsSet && shapeType.Value == null)
-                throw new ArgumentNullException(nameof(shapeType), "Property is not nullable for class NullableShape.");
 
             if (quadrilateral != null)
                 return new NullableShape(quadrilateral);

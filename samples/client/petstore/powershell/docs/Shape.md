@@ -3,17 +3,12 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ShapeType** | **String** |  | 
-**TriangleType** | **String** |  | 
-**QuadrilateralType** | **String** |  | 
 
 ## Examples
 
 - Prepare the resource
 ```powershell
-$Shape = Initialize-PSPetstoreShape  -ShapeType null `
- -TriangleType null `
- -QuadrilateralType null
+$Shape = Initialize-PSPetstoreShape 
 ```
 
 - Convert the resource to JSON

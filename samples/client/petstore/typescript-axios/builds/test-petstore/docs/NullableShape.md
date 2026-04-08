@@ -6,9 +6,6 @@ The value may be a shape or the \'null\' value. The \'nullable\' attribute was i
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**shapeType** | **string** |  | [default to undefined]
-**triangleType** | **string** |  | [default to undefined]
-**quadrilateralType** | **string** |  | [default to undefined]
 
 ## Example
 
@@ -16,9 +13,6 @@ Name | Type | Description | Notes
 import { NullableShape } from './api';
 
 const instance: NullableShape = {
-    shapeType,
-    triangleType,
-    quadrilateralType,
 };
 ```
 
