@@ -34,9 +34,3 @@ internal struct ReadOnlyFirst: Codable, JSONEncodable {
     }
 }
 
-
-extension ReadOnlyFirst: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

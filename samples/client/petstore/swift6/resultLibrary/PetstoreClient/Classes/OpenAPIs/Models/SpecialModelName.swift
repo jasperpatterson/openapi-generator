@@ -27,9 +27,3 @@ internal struct SpecialModelName: Sendable, Codable {
     }
 }
 
-
-extension SpecialModelName: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

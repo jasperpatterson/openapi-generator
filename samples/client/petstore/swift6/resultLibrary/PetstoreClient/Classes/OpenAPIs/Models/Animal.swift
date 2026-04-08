@@ -31,9 +31,3 @@ internal struct Animal: Sendable, Codable {
     }
 }
 
-
-extension Animal: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

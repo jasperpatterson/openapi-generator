@@ -58,9 +58,3 @@ internal struct User: Sendable, Codable {
 
 
 extension User: Identifiable {}
-
-extension User: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

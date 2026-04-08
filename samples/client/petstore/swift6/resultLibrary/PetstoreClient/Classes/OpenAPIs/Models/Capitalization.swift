@@ -48,9 +48,3 @@ internal struct Capitalization: Sendable, Codable {
     }
 }
 
-
-extension Capitalization: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

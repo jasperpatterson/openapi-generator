@@ -33,9 +33,3 @@ internal struct Category: Sendable, Codable, Hashable {
 
 
 extension Category: Identifiable {}
-
-extension Category: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

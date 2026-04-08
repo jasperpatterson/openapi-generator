@@ -35,9 +35,3 @@ internal struct Dog: Sendable, Codable {
     }
 }
 
-
-extension Dog: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

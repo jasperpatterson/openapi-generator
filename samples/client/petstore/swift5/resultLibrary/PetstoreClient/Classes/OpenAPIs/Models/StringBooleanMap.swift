@@ -50,9 +50,3 @@ internal struct StringBooleanMap: Codable, JSONEncodable {
     }
 }
 
-
-extension StringBooleanMap: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

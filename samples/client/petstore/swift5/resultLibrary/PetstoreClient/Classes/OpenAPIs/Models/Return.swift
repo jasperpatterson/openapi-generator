@@ -31,9 +31,3 @@ internal struct Return: Codable, JSONEncodable {
     }
 }
 
-
-extension Return: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

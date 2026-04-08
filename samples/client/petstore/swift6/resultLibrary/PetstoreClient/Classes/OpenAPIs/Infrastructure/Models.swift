@@ -42,6 +42,10 @@ protocol UnknownCaseCheckable {
     var containsUnknownDefaultOpenApiCase: Bool { get }
 }
 
+extension UnknownCaseCheckable {
+    internal var containsUnknownDefaultOpenApiCase: Bool { false }
+}
+
 /// A flexible type that can be encoded (`.encodeNull` or `.encodeValue`)
 /// or not encoded (`.encodeNothing`). Intended for request payloads.
 internal enum NullEncodable<Wrapped> {

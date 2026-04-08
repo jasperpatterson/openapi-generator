@@ -30,9 +30,3 @@ internal struct SpecialModelName: Codable, JSONEncodable {
     }
 }
 
-
-extension SpecialModelName: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

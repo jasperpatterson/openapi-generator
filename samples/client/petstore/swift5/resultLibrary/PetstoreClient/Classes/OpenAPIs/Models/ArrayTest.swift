@@ -38,9 +38,3 @@ internal struct ArrayTest: Codable, JSONEncodable {
     }
 }
 
-
-extension ArrayTest: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

@@ -30,9 +30,3 @@ internal struct Client: Codable, JSONEncodable {
     }
 }
 
-
-extension Client: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

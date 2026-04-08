@@ -34,9 +34,3 @@ internal struct FileSchemaTestClass: Codable, JSONEncodable {
     }
 }
 
-
-extension FileSchemaTestClass: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

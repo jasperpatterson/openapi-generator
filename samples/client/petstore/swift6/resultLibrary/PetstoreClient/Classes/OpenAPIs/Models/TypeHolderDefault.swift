@@ -43,9 +43,3 @@ internal struct TypeHolderDefault: Sendable, Codable {
     }
 }
 
-
-extension TypeHolderDefault: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

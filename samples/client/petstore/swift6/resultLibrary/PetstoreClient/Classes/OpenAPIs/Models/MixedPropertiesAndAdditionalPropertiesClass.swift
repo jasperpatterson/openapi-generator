@@ -35,9 +35,3 @@ internal struct MixedPropertiesAndAdditionalPropertiesClass: Sendable, Codable {
     }
 }
 
-
-extension MixedPropertiesAndAdditionalPropertiesClass: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

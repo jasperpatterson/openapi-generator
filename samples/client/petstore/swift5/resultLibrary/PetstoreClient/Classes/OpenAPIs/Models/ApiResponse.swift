@@ -38,9 +38,3 @@ internal struct ApiResponse: Codable, JSONEncodable {
     }
 }
 
-
-extension ApiResponse: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

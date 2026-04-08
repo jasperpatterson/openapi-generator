@@ -28,9 +28,3 @@ internal struct Return: Sendable, Codable {
     }
 }
 
-
-extension Return: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

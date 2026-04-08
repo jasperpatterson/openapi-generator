@@ -85,9 +85,3 @@ internal struct FormatTest: Codable, JSONEncodable {
     }
 }
 
-
-extension FormatTest: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

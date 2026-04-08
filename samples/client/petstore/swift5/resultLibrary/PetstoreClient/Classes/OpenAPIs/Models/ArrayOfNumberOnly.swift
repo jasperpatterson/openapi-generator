@@ -30,9 +30,3 @@ internal struct ArrayOfNumberOnly: Codable, JSONEncodable {
     }
 }
 
-
-extension ArrayOfNumberOnly: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

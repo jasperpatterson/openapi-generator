@@ -38,9 +38,3 @@ internal struct MixedPropertiesAndAdditionalPropertiesClass: Codable, JSONEncoda
     }
 }
 
-
-extension MixedPropertiesAndAdditionalPropertiesClass: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

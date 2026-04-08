@@ -34,9 +34,3 @@ internal struct AdditionalPropertiesClass: Codable, JSONEncodable {
     }
 }
 
-
-extension AdditionalPropertiesClass: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

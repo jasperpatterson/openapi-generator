@@ -33,9 +33,3 @@ internal struct Tag: Sendable, Codable, Hashable {
 
 
 extension Tag: Identifiable {}
-
-extension Tag: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

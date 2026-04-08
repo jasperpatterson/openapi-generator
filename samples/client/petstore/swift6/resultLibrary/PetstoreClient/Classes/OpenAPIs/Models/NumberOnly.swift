@@ -27,9 +27,3 @@ internal struct NumberOnly: Sendable, Codable {
     }
 }
 
-
-extension NumberOnly: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

@@ -32,9 +32,3 @@ internal struct Model200Response: Sendable, Codable {
     }
 }
 
-
-extension Model200Response: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

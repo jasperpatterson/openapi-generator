@@ -31,9 +31,3 @@ internal struct ReadOnlyFirst: Sendable, Codable {
     }
 }
 
-
-extension ReadOnlyFirst: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

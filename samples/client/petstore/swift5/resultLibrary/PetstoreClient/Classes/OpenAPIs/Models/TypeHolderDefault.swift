@@ -46,9 +46,3 @@ internal struct TypeHolderDefault: Codable, JSONEncodable {
     }
 }
 
-
-extension TypeHolderDefault: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

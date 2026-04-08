@@ -38,9 +38,3 @@ internal struct Cat: Codable, JSONEncodable {
     }
 }
 
-
-extension Cat: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}

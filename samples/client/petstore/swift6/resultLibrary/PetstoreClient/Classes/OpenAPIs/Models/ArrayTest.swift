@@ -35,9 +35,3 @@ internal struct ArrayTest: Sendable, Codable {
     }
 }
 
-
-extension ArrayTest: UnknownCaseCheckable {
-    internal var containsUnknownDefaultOpenApiCase: Bool {
-        return false
-    }
-}
