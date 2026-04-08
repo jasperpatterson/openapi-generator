@@ -1,0 +1,63 @@
+openapi: 3.0.2
+info:
+  title: allOf with oneOf (no discriminator) test
+  version: 1.0.0
+paths:
+  /parent:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParentC'
+components:
+  schemas:
+    ParentC:
+      allOf:
+        - type: object
+          required: [type]
+          properties:
+            type:
+              type: string
+        - $ref: "#/components/schemas/Child"
+
+    Child:
+      oneOf:
+        - $ref: "#/components/schemas/ChildX"
+        - $ref: "#/components/schemas/ChildY"
+        - $ref: "#/components/schemas/ChildZ"
+
+    ChildX:
+      type: object
+      required: [kind, sharedField, xOnlyField]
+      properties:
+        kind:
+          type: string
+        sharedField:
+          type: string
+        xOnlyField:
+          type: string
+
+    ChildY:
+      type: object
+      required: [kind, sharedField, yOnlyField]
+      properties:
+        kind:
+          type: string
+        sharedField:
+          type: string
+        yOnlyField:
+          type: string
+
+    ChildZ:
+      type: object
+      required: [kind, sharedField, zOnlyField]
+      properties:
+        kind:
+          type: string
+        sharedField:
+          type: string
+        zOnlyField:
+          type: integer

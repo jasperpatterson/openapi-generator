@@ -1589,6 +1589,11 @@ public class ModelUtils {
                     } else if (hasOrInheritsDiscriminator(s, allSchemas, new ArrayList<Schema>())) {
                         // discriminator.propertyName is used or x-parent is used
                         parentNameCandidates.add(parentName);
+                    } else if (hasOneOf(s)) {
+                        // a $ref to a oneOf schema is treated as a parent even without
+                        // a discriminator, to avoid flattening union type variants into
+                        // an impossible conjunction of all variant properties
+                        parentNameCandidates.add(parentName);
                     } else {
                         // not a parent since discriminator.propertyName or x-parent is not set
                         hasAmbiguousParents = true;
@@ -1654,6 +1659,13 @@ public class ModelUtils {
                         names.add("UNKNOWN_PARENT_NAME");
                     } else if (hasOrInheritsDiscriminator(s, allSchemas, new ArrayList<Schema>())) {
                         // discriminator.propertyName is used or x-parent is used
+                        names.add(parentName);
+                        if (includeAncestors && isComposedSchema(s)) {
+                            names.addAll(getAllParentsName(s, allSchemas, true, seenNames));
+                        }
+                    } else if (hasOneOf(s)) {
+                        // a $ref to a oneOf schema is treated as a parent even without
+                        // a discriminator
                         names.add(parentName);
                         if (includeAncestors && isComposedSchema(s)) {
                             names.addAll(getAllParentsName(s, allSchemas, true, seenNames));

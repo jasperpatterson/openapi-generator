@@ -2802,7 +2802,12 @@ public class DefaultCodegen implements CodegenConfig {
                 addImport(composed, refSchema, m, modelName);
 
                 if (allDefinitions != null && refSchema != null) {
-                    if (allParents.contains(ref) && supportsMultipleInheritance) {
+                    if (ModelUtils.hasOneOf(refSchema)) {
+                        // Do not flatten oneOf variant properties into this model.
+                        // addProperties() would recurse into each variant and merge all
+                        // their properties, producing an impossible conjunction. The oneOf
+                        // ref is already tracked via m.interfaces.
+                    } else if (allParents.contains(ref) && supportsMultipleInheritance) {
                         // multiple inheritance
                         addProperties(allProperties, allRequired, refSchema, new HashSet<>());
                     } else if (parentName != null && parentName.equals(ref) && supportsInheritance) {
