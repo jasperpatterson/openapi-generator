@@ -52,7 +52,7 @@ import com.google.gson.JsonParseException;
 
 import org.openapitools.client.JSON;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.22.0-SNAPSHOT")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.23.0-SNAPSHOT")
 public class NullableShape extends AbstractOpenApiSchema {
     private static final Logger log = Logger.getLogger(NullableShape.class.getName());
 
@@ -226,6 +226,7 @@ public class NullableShape extends AbstractOpenApiSchema {
      * @return The actual instance of `Triangle`
      * @throws ClassCastException if the instance is not `Triangle`
      */
+    @SuppressWarnings("unchecked")
     public Triangle getTriangle() throws ClassCastException {
         return (Triangle)super.getActualInstance();
     }
@@ -237,6 +238,7 @@ public class NullableShape extends AbstractOpenApiSchema {
      * @return The actual instance of `Quadrilateral`
      * @throws ClassCastException if the instance is not `Quadrilateral`
      */
+    @SuppressWarnings("unchecked")
     public Quadrilateral getQuadrilateral() throws ClassCastException {
         return (Quadrilateral)super.getActualInstance();
     }

@@ -39,6 +39,16 @@ extension {{#swiftUseApiNamespace}}{{projectName}}API.{{/swiftUseApiNamespace}}{
         if {{{name}}} == .unknownDefaultOpenApi { return true }
         {{/vendorExtensions.x-null-encodable}}
         {{/isContainer}}
+        {{#isArray}}
+        {{#required}}{{^isNullable}}
+        if {{{name}}}.contains(.unknownDefaultOpenApi) { return true }
+        {{/isNullable}}{{#isNullable}}
+        if {{{name}}}?.contains(.unknownDefaultOpenApi) == true { return true }
+        {{/isNullable}}{{/required}}
+        {{^required}}
+        if {{{name}}}?.contains(.unknownDefaultOpenApi) == true { return true }
+        {{/required}}
+        {{/isArray}}
         {{/isEnum}}
         {{^isEnum}}
         {{#isEnumRef}}
@@ -50,6 +60,16 @@ extension {{#swiftUseApiNamespace}}{{projectName}}API.{{/swiftUseApiNamespace}}{
         if {{{name}}} == .unknownDefaultOpenApi { return true }
         {{/vendorExtensions.x-null-encodable}}
         {{/isContainer}}
+        {{#isArray}}
+        {{#required}}{{^isNullable}}
+        if {{{name}}}.contains(.unknownDefaultOpenApi) { return true }
+        {{/isNullable}}{{#isNullable}}
+        if {{{name}}}?.contains(.unknownDefaultOpenApi) == true { return true }
+        {{/isNullable}}{{/required}}
+        {{^required}}
+        if {{{name}}}?.contains(.unknownDefaultOpenApi) == true { return true }
+        {{/required}}
+        {{/isArray}}
         {{/isEnumRef}}
         {{/isEnum}}
         {{/allVars}}

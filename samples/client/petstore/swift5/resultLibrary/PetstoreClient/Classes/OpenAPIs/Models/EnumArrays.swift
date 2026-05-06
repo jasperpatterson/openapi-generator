@@ -48,6 +48,8 @@ internal struct EnumArrays: Codable, JSONEncodable {
 extension EnumArrays: UnknownCaseCheckable {
     internal var containsUnknownDefaultOpenApiCase: Bool {
         if justSymbol == .unknownDefaultOpenApi { return true }
+        
+        if arrayEnum?.contains(.unknownDefaultOpenApi) == true { return true }
         return false
     }
 }
