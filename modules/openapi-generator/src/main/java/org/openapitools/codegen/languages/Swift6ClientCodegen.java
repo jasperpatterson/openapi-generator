@@ -1241,6 +1241,13 @@ public class Swift6ClientCodegen extends DefaultCodegen implements CodegenConfig
     }
 
     @Override
+    public Map<String, ModelsMap> postProcessAllModels(Map<String, ModelsMap> objs) {
+        Map<String, ModelsMap> processed = super.postProcessAllModels(objs);
+        SwiftCodegenUtils.attachSharedAccessors(processed);
+        return processed;
+    }
+
+    @Override
     public void postProcessModelProperty(CodegenModel model, CodegenProperty property) {
         super.postProcessModelProperty(model, property);
 
