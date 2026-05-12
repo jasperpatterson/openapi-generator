@@ -1,0 +1,59 @@
+openapi: 3.0.1
+info:
+  title: oneOf with shared properties
+  version: 0.0.1
+paths:
+  /shape:
+    get:
+      responses:
+        '200':
+          description: a shape
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shape'
+components:
+  schemas:
+    Shape:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        kind:
+          type: string
+        onlyOnCircle:
+          type: string
+      oneOf:
+        - $ref: '#/components/schemas/Circle'
+        - $ref: '#/components/schemas/Square'
+      discriminator:
+        propertyName: kind
+        mapping:
+          circle: '#/components/schemas/Circle'
+          square: '#/components/schemas/Square'
+    Circle:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        kind:
+          type: string
+        onlyOnCircle:
+          type: string
+        radius:
+          type: number
+    Square:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        kind:
+          type: string
+        side:
+          type: number

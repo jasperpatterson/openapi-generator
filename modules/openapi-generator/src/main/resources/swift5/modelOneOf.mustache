@@ -67,4 +67,17 @@
             {{/oneOfUnknownDefaultCase}}
         }
 {{/discriminator}}    }
+{{#vendorExtensions.x-swift-shared-accessors}}
+
+    {{#nonPublicApi}}internal{{/nonPublicApi}}{{^nonPublicApi}}public{{/nonPublicApi}} var {{{name}}}: {{{datatypeWithEnum}}}{{#required}}{{#isNullable}}?{{/isNullable}}{{/required}}{{^required}}?{{/required}} {
+        switch self {
+        {{#oneOf}}
+        case .type{{.}}(let value): return value.{{{name}}}
+        {{/oneOf}}
+        {{#oneOfUnknownDefaultCase}}
+        case .unknownDefaultOpenApi: return nil
+        {{/oneOfUnknownDefaultCase}}
+        }
+    }
+{{/vendorExtensions.x-swift-shared-accessors}}
 }

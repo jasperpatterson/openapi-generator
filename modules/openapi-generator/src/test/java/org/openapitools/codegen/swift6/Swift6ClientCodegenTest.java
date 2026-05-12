@@ -450,4 +450,49 @@ public class Swift6ClientCodegenTest {
         Assert.assertEquals(notNullableMap.getDataType(), "[String: String]");
         Assert.assertEquals(defaultMap.getDataType(), "[String: String]");
     }
+
+    @Test(description = "oneOf model with sibling properties exposes shared accessors on the enum", enabled = true)
+    public void oneOfSharedPropertyAccessorsTest() throws IOException {
+        Path target = Files.createTempDirectory("test");
+        File output = target.toFile();
+        try {
+            final CodegenConfigurator configurator = new CodegenConfigurator()
+                    .setGeneratorName("swift6")
+                    .setInputSpec("src/test/resources/3_0/oneOf_sharedProperties.yaml")
+                    .setOutputDir(target.toAbsolutePath().toString());
+
+            final ClientOptInput clientOptInput = configurator.toClientOptInput();
+            DefaultGenerator generator = new DefaultGenerator(false);
+            generator.setGeneratorPropertyDefault(CodegenConstants.MODELS, "true");
+            generator.setGeneratorPropertyDefault(CodegenConstants.APIS, "false");
+            generator.setGeneratorPropertyDefault(CodegenConstants.SUPPORTING_FILES, "false");
+
+            List<File> files = generator.opts(clientOptInput).generate();
+
+            File shapeFile = files.stream()
+                    .filter(f -> f.getName().equals("Shape.swift"))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Shape.swift not found"));
+
+            String content = Files.readString(shapeFile.toPath());
+
+            Assert.assertTrue(content.contains("public enum Shape:"));
+            Assert.assertTrue(content.contains("case typeCircle(Circle)"));
+            Assert.assertTrue(content.contains("case typeSquare(Square)"));
+
+            Assert.assertTrue(content.contains("public var id: String?"),
+                    "Expected computed accessor for shared property 'id'");
+            Assert.assertTrue(content.contains("public var label: String?"),
+                    "Expected computed accessor for shared property 'label'");
+            Assert.assertTrue(content.contains("public var kind: String?"),
+                    "Expected computed accessor for shared property 'kind'");
+            Assert.assertTrue(content.contains("case .typeCircle(let value): return value.id"));
+            Assert.assertTrue(content.contains("case .typeSquare(let value): return value.id"));
+
+            Assert.assertFalse(content.contains("public var onlyOnCircle:"),
+                    "Property only present on a subset of variants must not be exposed (would not compile)");
+        } finally {
+            output.deleteOnExit();
+        }
+    }
 }
