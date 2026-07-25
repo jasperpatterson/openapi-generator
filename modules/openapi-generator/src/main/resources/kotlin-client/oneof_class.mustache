@@ -66,6 +66,11 @@ import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 {{/discriminator}}
+{{^discriminator}}
+{{#unknownCaseCheckable}}
+import {{packageName}}.infrastructure.containsUnknownDefaultOpenApiCase
+{{/unknownCaseCheckable}}
+{{/discriminator}}
 {{/generateOneOfAnyOfWrappers}}
 {{#hasEnums}}
 {{/hasEnums}}
@@ -277,7 +282,7 @@ import java.io.IOException
         {{^vendorExtensions.x-duplicated-data-type}}
         {{#isArray}}
         if (jsonElement is JsonArray) {
-{{>oneof_anyof_deserialize_attempt}}
+{{>oneof_deserialize_attempt}}
         }
         {{/isArray}}
         {{^isArray}}
@@ -332,7 +337,7 @@ import java.io.IOException
         {{^isUuid}}
         {{^isDecimal}}
         if (jsonElement !is JsonPrimitive) {
-{{>oneof_anyof_deserialize_attempt}}
+{{>oneof_deserialize_attempt}}
         }
         {{/isDecimal}}
         {{/isUuid}}

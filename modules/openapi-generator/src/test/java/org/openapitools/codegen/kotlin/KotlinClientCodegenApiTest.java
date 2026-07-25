@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenConstants;
 import org.openapitools.codegen.DefaultGenerator;
+import org.openapitools.codegen.config.CodegenConfigurator;
 import org.openapitools.codegen.languages.KotlinClientCodegen;
 import org.openapitools.codegen.languages.features.CXFServerFeatures;
 import org.testng.Assert;
@@ -303,6 +304,66 @@ public class KotlinClientCodegenApiTest {
         generator.setGeneratorPropertyDefault(CodegenConstants.SUPPORTING_FILES, "false");
         generator.setGeneratorPropertyDefault(CodegenConstants.API_TESTS, "false");
         generator.setGeneratorPropertyDefault(CodegenConstants.API_DOCS, "false");
+    }
+
+    @Test(description = "oneOf deserializer rejects variants that only decoded because of the unknown default enum case")
+    public void testOneOfEnumUnknownDefaultCaseGuard() throws IOException {
+        File output = Files.createTempDirectory("test").toFile().getCanonicalFile();
+        output.deleteOnExit();
+
+        final CodegenConfigurator configurator = new CodegenConfigurator()
+                .setGeneratorName("kotlin")
+                .setLibrary(ClientLibrary.JVM_RETROFIT2.getLibraryName())
+                .setInputSpec("src/test/resources/3_0/kotlin/oneof-anyof-non-discriminator.yaml")
+                .setOutputDir(output.getAbsolutePath())
+                .addAdditionalProperty(CodegenConstants.SERIALIZATION_LIBRARY, "kotlinx_serialization")
+                .addAdditionalProperty(KotlinClientCodegen.GENERATE_ONEOF_ANYOF_WRAPPERS, true)
+                .addAdditionalProperty("enumUnknownDefaultCase", true);
+
+        List<File> files = new DefaultGenerator().opts(configurator.toClientOptInput()).generate();
+
+        File oneOfModel = generatedFile(files, "UserOrPet.kt");
+        assertFileContains(oneOfModel.toPath(), "import org.openapitools.client.infrastructure.containsUnknownDefaultOpenApiCase");
+        assertFileContains(oneOfModel.toPath(), "require(!instance.containsUnknownDefaultOpenApiCase())");
+
+        File petModel = generatedFile(files, "Pet.kt");
+        assertFileContains(petModel.toPath(), ": org.openapitools.client.infrastructure.UnknownCaseCheckable");
+        assertFileContains(petModel.toPath(), "override val containsUnknownDefaultOpenApiCase: kotlin.Boolean");
+        assertFileContains(petModel.toPath(), "if (status.containsUnknownDefaultOpenApiCase()) return true");
+        assertFileContains(petModel.toPath(), "if (kind.containsUnknownDefaultOpenApiCase()) return true");
+
+        File petKindModel = generatedFile(files, "PetKind.kt");
+        assertFileContains(petKindModel.toPath(), ": org.openapitools.client.infrastructure.UnknownCaseCheckable {");
+        assertFileContains(petKindModel.toPath(), "override val containsUnknownDefaultOpenApiCase: kotlin.Boolean");
+
+        File checkable = generatedFile(files, "UnknownCaseCheckable.kt");
+        assertFileContains(checkable.toPath(), "interface UnknownCaseCheckable");
+        assertFileContains(checkable.toPath(), "internal fun kotlin.Any?.containsUnknownDefaultOpenApiCase(): kotlin.Boolean");
+
+        // models without eligible enum properties must not implement the interface
+        assertFileNotContains(generatedFile(files, "User.kt").toPath(), "UnknownCaseCheckable");
+    }
+
+    @Test(description = "oneOf deserializer is unchanged when enumUnknownDefaultCase is disabled")
+    public void testOneOfWithoutEnumUnknownDefaultCaseHasNoGuard() throws IOException {
+        File output = Files.createTempDirectory("test").toFile().getCanonicalFile();
+        output.deleteOnExit();
+
+        final CodegenConfigurator configurator = new CodegenConfigurator()
+                .setGeneratorName("kotlin")
+                .setLibrary(ClientLibrary.JVM_RETROFIT2.getLibraryName())
+                .setInputSpec("src/test/resources/3_0/kotlin/oneof-anyof-non-discriminator.yaml")
+                .setOutputDir(output.getAbsolutePath())
+                .addAdditionalProperty(CodegenConstants.SERIALIZATION_LIBRARY, "kotlinx_serialization")
+                .addAdditionalProperty(KotlinClientCodegen.GENERATE_ONEOF_ANYOF_WRAPPERS, true);
+
+        List<File> files = new DefaultGenerator().opts(configurator.toClientOptInput()).generate();
+
+        assertFileNotContains(generatedFile(files, "UserOrPet.kt").toPath(), "containsUnknownDefaultOpenApiCase");
+        assertFileNotContains(generatedFile(files, "Pet.kt").toPath(), "UnknownCaseCheckable");
+
+        Assert.assertTrue(files.stream().noneMatch(f -> f.getName().equals("UnknownCaseCheckable.kt")),
+                "UnknownCaseCheckable.kt should not be generated when enumUnknownDefaultCase is disabled");
     }
 
     private static void assertFileContainsLine(List<String> lines, String line) {

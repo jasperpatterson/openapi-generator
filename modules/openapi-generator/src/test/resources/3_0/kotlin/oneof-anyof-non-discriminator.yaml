@@ -149,9 +149,23 @@ components:
           format: int64
         name:
           type: string
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+            - available
+            - pending
+            - sold
+        kind:
+          $ref: '#/components/schemas/PetKind'
       required:
         - id
         - name
+    PetKind:
+      type: string
+      enum:
+        - cat
+        - dog
     UserOrPet:
       oneOf:
         - $ref: '#/components/schemas/User'

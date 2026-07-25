@@ -24,6 +24,7 @@
 package org.openapitools.client.models
 
 import org.openapitools.client.models.Pet
+import org.openapitools.client.models.PetKind
 import org.openapitools.client.models.User
 
 import kotlinx.serialization.Serializable
@@ -44,6 +45,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
+import org.openapitools.client.infrastructure.containsUnknownDefaultOpenApiCase
 
 /**
  * 
@@ -88,6 +90,7 @@ object UserOrPetOrArrayStringSerializer : KSerializer<UserOrPetOrArrayString> {
         if (jsonElement !is JsonPrimitive) {
             try {
                 val instance = jsonDecoder.json.decodeFromJsonElement<User>(jsonElement)
+                require(!instance.containsUnknownDefaultOpenApiCase()) { "value contains unknown default enum case" }
                 return UserOrPetOrArrayString.UserValue(instance)
             } catch (e: Exception) {
                 errorMessages.add("Failed to deserialize as User: ${e.message}")
@@ -96,6 +99,7 @@ object UserOrPetOrArrayStringSerializer : KSerializer<UserOrPetOrArrayString> {
         if (jsonElement !is JsonPrimitive) {
             try {
                 val instance = jsonDecoder.json.decodeFromJsonElement<Pet>(jsonElement)
+                require(!instance.containsUnknownDefaultOpenApiCase()) { "value contains unknown default enum case" }
                 return UserOrPetOrArrayString.PetValue(instance)
             } catch (e: Exception) {
                 errorMessages.add("Failed to deserialize as Pet: ${e.message}")
@@ -104,6 +108,7 @@ object UserOrPetOrArrayStringSerializer : KSerializer<UserOrPetOrArrayString> {
         if (jsonElement is JsonArray) {
             try {
                 val instance = jsonDecoder.json.decodeFromJsonElement<kotlin.collections.List<kotlin.String>>(jsonElement)
+                require(!instance.containsUnknownDefaultOpenApiCase()) { "value contains unknown default enum case" }
                 return UserOrPetOrArrayString.ListStringValue(instance)
             } catch (e: Exception) {
                 errorMessages.add("Failed to deserialize as kotlin.collections.List<kotlin.String>: ${e.message}")
