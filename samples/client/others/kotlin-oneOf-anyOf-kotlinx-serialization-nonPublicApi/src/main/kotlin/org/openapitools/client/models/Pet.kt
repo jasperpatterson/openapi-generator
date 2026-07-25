@@ -23,6 +23,7 @@
 
 package org.openapitools.client.models
 
+import org.openapitools.client.models.PetKind
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
@@ -32,12 +33,15 @@ import kotlinx.serialization.Serializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.openapitools.client.infrastructure.containsUnknownDefaultOpenApiCase
 
 /**
  * 
  *
  * @param id 
  * @param name 
+ * @param status pet status in the store
+ * @param kind 
  */
 @Serializable
 
@@ -47,10 +51,62 @@ internal data class Pet (
     val id: kotlin.Long,
 
     @SerialName(value = "name")
-    val name: kotlin.String
+    val name: kotlin.String,
 
-) {
+    /* pet status in the store */
+    @SerialName(value = "status")
+    val status: Pet.Status? = null,
 
+    @Contextual @SerialName(value = "kind")
+    val kind: PetKind? = null
+
+) : org.openapitools.client.infrastructure.UnknownCaseCheckable {
+
+    /**
+     * pet status in the store
+     *
+     * Values: available,pending,sold,unknown_default_open_api
+     */
+    @Serializable(with = StatusSerializer::class)
+    internal enum class Status(val value: kotlin.String) : org.openapitools.client.infrastructure.UnknownCaseCheckable {
+        @SerialName(value = "available") available("available"),
+        @SerialName(value = "pending") pending("pending"),
+        @SerialName(value = "sold") sold("sold"),
+        @SerialName(value = "unknown_default_open_api") unknown_default_open_api("unknown_default_open_api");
+
+        /**
+         * True when this value is the synthetic unknown default case that unknown
+         * enum values are mapped to during deserialization.
+         */
+        override val containsUnknownDefaultOpenApiCase: kotlin.Boolean
+            get() = this == unknown_default_open_api
+    }
+
+    internal object StatusSerializer : KSerializer<Status> {
+        override val descriptor = kotlin.String.serializer().descriptor
+
+        override fun deserialize(decoder: Decoder): Status {
+            val value = decoder.decodeSerializableValue(kotlin.String.serializer())
+            return Status.entries.firstOrNull { it.value == value }
+                ?: Status.unknown_default_open_api
+        }
+
+        override fun serialize(encoder: Encoder, value: Status) {
+            encoder.encodeSerializableValue(kotlin.String.serializer(), value.value)
+        }
+    }
+
+    /**
+     * True when any enum property (or enum item of an array property) of this model
+     * holds the synthetic unknown default case that unknown enum values are mapped
+     * to during deserialization.
+     */
+    override val containsUnknownDefaultOpenApiCase: kotlin.Boolean
+        get() {
+            if (status.containsUnknownDefaultOpenApiCase()) return true
+            if (kind.containsUnknownDefaultOpenApiCase()) return true
+            return false
+        }
 
 }
 

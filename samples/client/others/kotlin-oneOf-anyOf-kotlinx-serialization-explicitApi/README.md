@@ -60,6 +60,7 @@ All URIs are relative to *http://example.org*
  - [org.openapitools.client.models.AnyOfUserOrPetOrArrayString](docs/AnyOfUserOrPetOrArrayString.md)
  - [org.openapitools.client.models.BooleanOrLong](docs/BooleanOrLong.md)
  - [org.openapitools.client.models.Pet](docs/Pet.md)
+ - [org.openapitools.client.models.PetKind](docs/PetKind.md)
  - [org.openapitools.client.models.StringOrLong](docs/StringOrLong.md)
  - [org.openapitools.client.models.User](docs/User.md)
  - [org.openapitools.client.models.UserOrPet](docs/UserOrPet.md)

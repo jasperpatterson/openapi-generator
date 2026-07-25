@@ -28,6 +28,7 @@ src/main/kotlin/org/openapitools/client/infrastructure/StringBuilderAdapter.kt
 src/main/kotlin/org/openapitools/client/infrastructure/URIAdapter.kt
 src/main/kotlin/org/openapitools/client/infrastructure/URLAdapter.kt
 src/main/kotlin/org/openapitools/client/infrastructure/UUIDAdapter.kt
+src/main/kotlin/org/openapitools/client/infrastructure/UnknownCaseCheckable.kt
 src/main/kotlin/org/openapitools/client/models/Animal.kt
 src/main/kotlin/org/openapitools/client/models/AnotherAnimal.kt
 src/main/kotlin/org/openapitools/client/models/Bird.kt

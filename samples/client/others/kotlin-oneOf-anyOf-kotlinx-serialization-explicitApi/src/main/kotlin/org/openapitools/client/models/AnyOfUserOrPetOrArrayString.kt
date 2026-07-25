@@ -24,6 +24,7 @@
 package org.openapitools.client.models
 
 import org.openapitools.client.models.Pet
+import org.openapitools.client.models.PetKind
 import org.openapitools.client.models.User
 
 import kotlinx.serialization.Serializable

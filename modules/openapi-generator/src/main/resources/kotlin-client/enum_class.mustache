@@ -58,7 +58,7 @@ import kotlinx.serialization.encoding.Encoder
 @JsonClass(generateAdapter = false)
 {{/moshi}}
 {{/multiplatform}}
-{{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}enum class {{classname}}({{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}{{#jackson}}@get:JsonValue {{/jackson}}val value: {{{dataType}}}) {
+{{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}enum class {{classname}}({{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}{{#jackson}}@get:JsonValue {{/jackson}}val value: {{{dataType}}}){{#unknownCaseCheckable}} : {{packageName}}.infrastructure.UnknownCaseCheckable{{/unknownCaseCheckable}} {
 {{#allowableValues}}{{#enumVars}}
     {{^multiplatform}}
     {{#moshi}}
@@ -101,6 +101,15 @@ import kotlinx.serialization.encoding.Encoder
      * the client sends the correct enum values to the server always.
      */
     override fun toString(): kotlin.String = value{{^isString}}.toString(){{/isString}}
+{{#unknownCaseCheckable}}
+
+    /**
+     * True when this value is the synthetic unknown default case that unknown
+     * enum values are mapped to during deserialization.
+     */
+    override val containsUnknownDefaultOpenApiCase: kotlin.Boolean
+        get() = this == {{#allowableValues}}{{#enumVars}}{{#-last}}{{&name}}{{/-last}}{{/enumVars}}{{/allowableValues}}
+{{/unknownCaseCheckable}}
 
     {{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}companion object {
         /**
