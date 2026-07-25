@@ -212,6 +212,99 @@ public class KotlinClientCodegenApiTest {
         assertFileNotContains(defaultApi.toPath(), "mapDeep?.apply {");
     }
 
+    @Test(description = "oneOf wrappers with a discriminator fall back to UnknownDefaultOpenApi when oneOfUnknownDefaultCase is enabled")
+    public void testOneOfDiscriminatorUnknownDefaultCase() throws IOException {
+        OpenAPI openAPI = readOpenAPI("src/test/resources/3_0/kotlin/polymorphism-oneof-discriminator.yaml");
+
+        KotlinClientCodegen codegen = createOneOfWrappersCodegen("kotlinx_serialization", true);
+
+        DefaultGenerator generator = new DefaultGenerator();
+        enableOnlyModelGeneration(generator);
+
+        List<File> files = generator.opts(createClientOptInput(openAPI, codegen)).generate();
+        File animal = generatedFile(files, "Animal.kt");
+
+        assertFileContains(animal.toPath(), "value class UnknownDefaultOpenApi(val value: JsonObject) : Animal");
+        assertFileContains(animal.toPath(), "is Animal.UnknownDefaultOpenApi -> value.value");
+        assertFileContains(animal.toPath(), "else -> Animal.UnknownDefaultOpenApi(element)");
+        assertFileNotContains(animal.toPath(), "else -> throw SerializationException(\"Unknown Animal");
+    }
+
+    @Test(description = "oneOf wrappers without a discriminator fall back to UnknownDefaultOpenApi when oneOfUnknownDefaultCase is enabled")
+    public void testOneOfNonDiscriminatorUnknownDefaultCase() throws IOException {
+        OpenAPI openAPI = readOpenAPI("src/test/resources/3_0/kotlin/oneof-anyof-non-discriminator.yaml");
+
+        KotlinClientCodegen codegen = createOneOfWrappersCodegen("kotlinx_serialization", true);
+
+        DefaultGenerator generator = new DefaultGenerator();
+        enableOnlyModelGeneration(generator);
+
+        List<File> files = generator.opts(createClientOptInput(openAPI, codegen)).generate();
+        File userOrPet = generatedFile(files, "UserOrPet.kt");
+
+        assertFileContains(userOrPet.toPath(), "value class UnknownDefaultOpenApi(val value: JsonElement) : UserOrPet");
+        assertFileContains(userOrPet.toPath(), "is UserOrPet.UnknownDefaultOpenApi -> jsonEncoder.encodeJsonElement(value.value)");
+        assertFileContains(userOrPet.toPath(), "return UserOrPet.UnknownDefaultOpenApi(jsonElement)");
+        assertFileNotContains(userOrPet.toPath(), "throw SerializationException(\"Cannot deserialize UserOrPet");
+
+        // anyOf wrappers are not covered by the option
+        assertFileNotContains(generatedFile(files, "AnyOfUserOrPet.kt").toPath(), "UnknownDefaultOpenApi");
+    }
+
+    @Test(description = "oneOf wrappers keep throwing on unknown variants when oneOfUnknownDefaultCase is disabled")
+    public void testOneOfUnknownDefaultCaseDisabledByDefault() throws IOException {
+        OpenAPI openAPI = readOpenAPI("src/test/resources/3_0/kotlin/polymorphism-oneof-discriminator.yaml");
+
+        KotlinClientCodegen codegen = createOneOfWrappersCodegen("kotlinx_serialization", false);
+
+        DefaultGenerator generator = new DefaultGenerator();
+        enableOnlyModelGeneration(generator);
+
+        List<File> files = generator.opts(createClientOptInput(openAPI, codegen)).generate();
+        File animal = generatedFile(files, "Animal.kt");
+
+        assertFileContains(animal.toPath(), "else -> throw SerializationException(\"Unknown Animal discriminator: $discriminatorValue\")");
+        assertFileNotContains(animal.toPath(), "UnknownDefaultOpenApi");
+    }
+
+    @Test(description = "oneOfUnknownDefaultCase is ignored for serialization libraries without kotlinx oneOf wrappers")
+    public void testOneOfUnknownDefaultCaseIgnoredForUnsupportedSerializationLibrary() throws IOException {
+        OpenAPI openAPI = readOpenAPI("src/test/resources/3_0/kotlin/oneof-anyof-non-discriminator.yaml");
+
+        KotlinClientCodegen codegen = createOneOfWrappersCodegen("gson", true);
+
+        DefaultGenerator generator = new DefaultGenerator();
+        enableOnlyModelGeneration(generator);
+
+        List<File> files = generator.opts(createClientOptInput(openAPI, codegen)).generate();
+
+        assertFileNotContains(generatedFile(files, "UserOrPet.kt").toPath(), "UnknownDefaultOpenApi");
+    }
+
+    private KotlinClientCodegen createOneOfWrappersCodegen(String serializationLibrary, boolean oneOfUnknownDefaultCase) throws IOException {
+        KotlinClientCodegen codegen = createCodegen(ClientLibrary.JVM_RETROFIT2);
+        codegen.setSerializationLibrary(serializationLibrary);
+        codegen.additionalProperties().put(KotlinClientCodegen.GENERATE_ONEOF_ANYOF_WRAPPERS, true);
+        if (oneOfUnknownDefaultCase) {
+            codegen.additionalProperties().put(KotlinClientCodegen.ONE_OF_UNKNOWN_DEFAULT_CASE, true);
+        }
+        return codegen;
+    }
+
+    private static File generatedFile(List<File> files, String name) {
+        return files.stream().filter(file -> file.getName().equals(name)).findAny().orElseThrow();
+    }
+
+    private static void enableOnlyModelGeneration(DefaultGenerator generator) {
+        generator.setGeneratorPropertyDefault(CodegenConstants.MODELS, "true");
+        generator.setGeneratorPropertyDefault(CodegenConstants.MODEL_TESTS, "false");
+        generator.setGeneratorPropertyDefault(CodegenConstants.MODEL_DOCS, "false");
+        generator.setGeneratorPropertyDefault(CodegenConstants.APIS, "false");
+        generator.setGeneratorPropertyDefault(CodegenConstants.SUPPORTING_FILES, "false");
+        generator.setGeneratorPropertyDefault(CodegenConstants.API_TESTS, "false");
+        generator.setGeneratorPropertyDefault(CodegenConstants.API_DOCS, "false");
+    }
+
     private static void assertFileContainsLine(List<String> lines, String line) {
         Assert.assertListContains(lines, s -> s.equals(line), line);
     }

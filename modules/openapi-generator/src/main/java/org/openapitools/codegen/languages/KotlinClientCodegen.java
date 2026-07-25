@@ -112,6 +112,8 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
 
     public static final String GENERATE_ONEOF_ANYOF_WRAPPERS = "generateOneOfAnyOfWrappers";
 
+    public static final String ONE_OF_UNKNOWN_DEFAULT_CASE = "oneOfUnknownDefaultCase";
+
     public static final String COMPANION_OBJECT = "companionObject";
 
     protected static final String VENDOR_EXTENSION_BASE_NAME_LITERAL = "x-base-name-literal";
@@ -130,6 +132,7 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
     @Setter protected boolean omitGradleWrapper = false;
     @Setter protected boolean mapFileBinaryToByteArray = false;
     @Setter protected boolean generateOneOfAnyOfWrappers = true;
+    @Setter protected boolean oneOfUnknownDefaultCase = false;
     @Getter @Setter protected boolean failOnUnknownProperties = false;
     @Setter protected boolean companionObject = false;
 
@@ -296,6 +299,8 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
         cliOptions.add(new CliOption(MAP_FILE_BINARY_TO_BYTE_ARRAY, "Map File and Binary to ByteArray (default: false)").defaultValue(Boolean.FALSE.toString()));
 
         cliOptions.add(CliOption.newBoolean(GENERATE_ONEOF_ANYOF_WRAPPERS, "Generate oneOf, anyOf schemas as wrappers. Only `jvm-retrofit2`(library) with `gson` or `kotlinx_serialization`(serializationLibrary) support this option."));
+
+        cliOptions.add(CliOption.newBoolean(ONE_OF_UNKNOWN_DEFAULT_CASE, "Adds an UnknownDefaultOpenApi fallback case to oneOf wrappers that is returned when the payload matches no known variant, instead of failing deserialization. Only `kotlinx_serialization`(serializationLibrary) with `generateOneOfAnyOfWrappers` supports this option.", false));
 
         cliOptions.add(CliOption.newBoolean(COMPANION_OBJECT, "Whether to generate companion objects in data classes, enabling companion extensions.", false));
 
@@ -500,6 +505,10 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
             setGenerateOneOfAnyOfWrappers(convertPropertyToBooleanAndWriteBack(GENERATE_ONEOF_ANYOF_WRAPPERS));
         }
 
+        if (additionalProperties.containsKey(ONE_OF_UNKNOWN_DEFAULT_CASE)) {
+            setOneOfUnknownDefaultCase(convertPropertyToBooleanAndWriteBack(ONE_OF_UNKNOWN_DEFAULT_CASE));
+        }
+
         if (additionalProperties.containsKey(FAIL_ON_UNKNOWN_PROPERTIES)) {
             setFailOnUnknownProperties(convertPropertyToBooleanAndWriteBack(FAIL_ON_UNKNOWN_PROPERTIES));
         } else {
@@ -543,6 +552,14 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
             default:
                 break;
         }
+
+        // The fallback case is only implemented in the kotlinx_serialization oneOf wrapper templates.
+        // Resolve the template-facing flag after the library-specific processing above because that
+        // can change the serialization library.
+        if (oneOfUnknownDefaultCase && !isOneOfUnknownDefaultCaseSupported()) {
+            LOGGER.warn("{} is only supported with serializationLibrary `kotlinx_serialization` and generateOneOfAnyOfWrappers enabled (JVM libraries only); the option will be ignored.", ONE_OF_UNKNOWN_DEFAULT_CASE);
+        }
+        additionalProperties.put(ONE_OF_UNKNOWN_DEFAULT_CASE, oneOfUnknownDefaultCase && isOneOfUnknownDefaultCaseSupported());
 
         processDateLibrary();
         processRequestDateConverter();
@@ -1042,6 +1059,14 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
 
     private Stream<List<CodegenProperty>> getAllVarProperties(CodegenModel model) {
         return Stream.of(model.vars, model.allVars, model.optionalVars, model.requiredVars, model.readOnlyVars, model.readWriteVars);
+    }
+
+    private boolean isOneOfUnknownDefaultCaseSupported() {
+        // Reads the raw additional property rather than the generateOneOfAnyOfWrappers field
+        // (which defaults to true) so this matches {{#generateOneOfAnyOfWrappers}} template truthiness.
+        return getSerializationLibrary() == SERIALIZATION_LIBRARY_TYPE.kotlinx_serialization
+                && !MULTIPLATFORM.equals(getLibrary())
+                && Boolean.TRUE.equals(additionalProperties.get(GENERATE_ONEOF_ANYOF_WRAPPERS));
     }
 
     private boolean usesRetrofit2Library() {

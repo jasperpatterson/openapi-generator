@@ -57,6 +57,9 @@ sealed interface UserOrPet {
     @JvmInline
     value class PetValue(val value: Pet) : UserOrPet
 
+    @JvmInline
+    value class UnknownDefaultOpenApi(val value: JsonElement) : UserOrPet
+
 }
 
 object UserOrPetSerializer : KSerializer<UserOrPet> {
@@ -68,6 +71,7 @@ object UserOrPetSerializer : KSerializer<UserOrPet> {
         when (value) {
             is UserOrPet.UserValue -> jsonEncoder.encodeSerializableValue(User.serializer(), value.value)
             is UserOrPet.PetValue -> jsonEncoder.encodeSerializableValue(Pet.serializer(), value.value)
+            is UserOrPet.UnknownDefaultOpenApi -> jsonEncoder.encodeJsonElement(value.value)
         }
     }
 
@@ -94,7 +98,7 @@ object UserOrPetSerializer : KSerializer<UserOrPet> {
             }
         }
 
-        throw SerializationException("Cannot deserialize UserOrPet. Tried: ${errorMessages.joinToString(", ")}")
+        return UserOrPet.UnknownDefaultOpenApi(jsonElement)
     }
 }
 

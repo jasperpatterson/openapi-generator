@@ -40,6 +40,7 @@ These options may be applied as additional-properties (cli) or configOptions (pl
 |nullableReturnType|Nullable return type| |false|
 |omitGradlePluginVersions|Whether to declare Gradle plugin versions in build files.| |false|
 |omitGradleWrapper|Whether to omit Gradle wrapper for creating a sub project.| |false|
+|oneOfUnknownDefaultCase|Adds an UnknownDefaultOpenApi fallback case to oneOf wrappers that is returned when the payload matches no known variant, instead of failing deserialization. Only `kotlinx_serialization`(serializationLibrary) with `generateOneOfAnyOfWrappers` supports this option.| |false|
 |packageName|Generated artifact package name.| |org.openapitools.client|
 |parcelizeModels|toggle &quot;@Parcelize&quot; for generated models| |null|
 |requestDateConverter|JVM-Option. Defines in how to handle date-time objects that are used for a request (as query or parameter)|<dl><dt>**toJson**</dt><dd>[DEFAULT] Date formatter option using a json converter.</dd><dt>**toString**</dt><dd>Use the 'toString'-method of the date-time object to retrieve the related string representation.</dd></dl>|toJson|

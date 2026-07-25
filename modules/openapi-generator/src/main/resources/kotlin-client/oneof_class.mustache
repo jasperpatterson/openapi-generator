@@ -125,6 +125,11 @@ import java.io.IOException
     {{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}} value class {{#fnToOneOfWrapperName}}{{mappingName}}{{/fnToOneOfWrapperName}}(val value: {{modelName}}) : {{classname}}
 
 {{/discriminator.mappedModels}}
+{{#oneOfUnknownDefaultCase}}
+    @JvmInline
+    {{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}} value class UnknownDefaultOpenApi(val value: JsonObject) : {{classname}}
+
+{{/oneOfUnknownDefaultCase}}
 }
 
 {{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}object {{classname}}Serializer : KSerializer<{{classname}}> {
@@ -140,6 +145,9 @@ import java.io.IOException
                 JsonObject(jsonMap)
             }
 {{/discriminator.mappedModels}}
+{{#oneOfUnknownDefaultCase}}
+            is {{classname}}.UnknownDefaultOpenApi -> value.value
+{{/oneOfUnknownDefaultCase}}
         }
         encoder.encodeJsonElement(jsonObject)
     }
@@ -158,7 +166,12 @@ import java.io.IOException
                 {{classname}}.{{#fnToOneOfWrapperName}}{{mappingName}}{{/fnToOneOfWrapperName}}(decoded)
             }
 {{/discriminator.mappedModels}}
+{{#oneOfUnknownDefaultCase}}
+            else -> {{classname}}.UnknownDefaultOpenApi(element)
+{{/oneOfUnknownDefaultCase}}
+{{^oneOfUnknownDefaultCase}}
             else -> throw SerializationException("Unknown {{classname}} {{discriminator.propertyBaseName}}: $discriminatorValue")
+{{/oneOfUnknownDefaultCase}}
         }
     }
 }
@@ -174,6 +187,11 @@ import java.io.IOException
 {{/vendorExtensions.x-duplicated-data-type}}
 {{/oneOf}}
 {{/composedSchemas}}
+{{#oneOfUnknownDefaultCase}}
+    @JvmInline
+    {{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}value class UnknownDefaultOpenApi({{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}val value: JsonElement) : {{classname}}
+
+{{/oneOfUnknownDefaultCase}}
 }
 
 {{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}object {{classname}}Serializer : KSerializer<{{classname}}> {
@@ -221,6 +239,9 @@ import java.io.IOException
             {{/vendorExtensions.x-duplicated-data-type}}
             {{/oneOf}}
             {{/composedSchemas}}
+            {{#oneOfUnknownDefaultCase}}
+            is {{classname}}.UnknownDefaultOpenApi -> jsonEncoder.encodeJsonElement(value.value)
+            {{/oneOfUnknownDefaultCase}}
         }
     }
 
@@ -281,7 +302,12 @@ import java.io.IOException
         {{/oneOf}}
         {{/composedSchemas}}
 
+        {{#oneOfUnknownDefaultCase}}
+        return {{classname}}.UnknownDefaultOpenApi(jsonElement)
+        {{/oneOfUnknownDefaultCase}}
+        {{^oneOfUnknownDefaultCase}}
         throw SerializationException("Cannot deserialize {{classname}}. Tried: ${errorMessages.joinToString(", ")}")
+        {{/oneOfUnknownDefaultCase}}
     }
 }
 {{/discriminator}}
