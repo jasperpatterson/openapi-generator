@@ -544,6 +544,10 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
                 break;
         }
 
+        // Single template-facing flag for the UnknownCaseCheckable machinery. Set after the
+        // library-specific processing above because that can change the serialization library.
+        additionalProperties.put("unknownCaseCheckable", isUnknownCaseCheckableEnabled());
+
         processDateLibrary();
         processRequestDateConverter();
 
@@ -766,6 +770,9 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
                 break;
 
             case kotlinx_serialization:
+                if (isUnknownCaseCheckableEnabled()) {
+                    supportingFiles.add(new SupportingFile("jvm-common/infrastructure/UnknownCaseCheckable.kt.mustache", infrastructureFolder, "UnknownCaseCheckable.kt"));
+                }
                 supportingFiles.add(new SupportingFile("jvm-common/infrastructure/AtomicBooleanAdapter.kt.mustache", infrastructureFolder, "AtomicBooleanAdapter.kt"));
                 supportingFiles.add(new SupportingFile("jvm-common/infrastructure/AtomicIntegerAdapter.kt.mustache", infrastructureFolder, "AtomicIntegerAdapter.kt"));
                 supportingFiles.add(new SupportingFile("jvm-common/infrastructure/AtomicLongAdapter.kt.mustache", infrastructureFolder, "AtomicLongAdapter.kt"));
@@ -969,6 +976,8 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
                 cm.vendorExtensions.put("x-has-data-class-body", true);
             }
 
+            markUnknownCaseCheckableModel(cm);
+
             // escape the variable base name for use as a string literal
             List<CodegenProperty> vars = Stream.of(
                             cm.vars,
@@ -988,6 +997,50 @@ public class KotlinClientCodegen extends AbstractKotlinCodegen {
         }
 
         return objects;
+    }
+
+    /**
+     * Whether generated models should implement the UnknownCaseCheckable interface so the
+     * oneOf deserializer can reject variants that only decoded successfully because an
+     * unknown enum value was mapped to the synthetic unknown default case. Mirrors the
+     * scope of the equivalent Swift feature: anyOf wrappers and map properties are
+     * intentionally not checked.
+     */
+    private boolean isUnknownCaseCheckableEnabled() {
+        // Reads the raw additional property rather than the generateOneOfAnyOfWrappers field
+        // (which defaults to true) so this matches {{#generateOneOfAnyOfWrappers}} template truthiness.
+        return enumUnknownDefaultCase
+                && getSerializationLibrary() == SERIALIZATION_LIBRARY_TYPE.kotlinx_serialization
+                && !MULTIPLATFORM.equals(getLibrary())
+                && Boolean.TRUE.equals(additionalProperties.get(GENERATE_ONEOF_ANYOF_WRAPPERS));
+    }
+
+    private void markUnknownCaseCheckableModel(CodegenModel cm) {
+        if (!isUnknownCaseCheckableEnabled()) {
+            return;
+        }
+        boolean isPlainModel = !cm.isEnum && !cm.isAlias && cm.discriminator == null
+                && (cm.oneOf == null || cm.oneOf.isEmpty())
+                && (cm.anyOf == null || cm.anyOf.isEmpty());
+        if (!isPlainModel) {
+            return;
+        }
+        boolean hasCheckableVars = false;
+        for (CodegenProperty var : cm.allVars) {
+            boolean checkable = (var.getIsEnumOrRef() && !var.isContainer)
+                    || (var.isArray && var.items != null && var.items.getIsEnumOrRef());
+            if (checkable) {
+                var.vendorExtensions.put("x-unknown-case-checkable-var", true);
+                hasCheckableVars = true;
+            }
+        }
+        if (hasCheckableVars) {
+            cm.vendorExtensions.put("x-unknown-case-checkable", true);
+            // Mirrors the supertype clauses on the data_class.mustache class declaration line;
+            // a clause added there must be reflected here.
+            boolean hasSuperTypes = cm.parent != null || serializableModel || parcelizeModels || getGenerateRoomModels();
+            cm.vendorExtensions.put("x-unknown-case-checkable-prefix", hasSuperTypes ? ", " : " : ");
+        }
     }
 
     @Override

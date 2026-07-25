@@ -48,6 +48,9 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.JsonClassDiscriminator
 {{/discriminator}}
+{{#vendorExtensions.x-unknown-case-checkable}}
+import {{packageName}}.infrastructure.containsUnknownDefaultOpenApiCase
+{{/vendorExtensions.x-unknown-case-checkable}}
 {{/kotlinx_serialization}}
 {{#parcelizeModels}}
 import android.os.Parcelable
@@ -111,7 +114,7 @@ import {{packageName}}.infrastructure.ITransformForStorage
 {{#required}}{{>data_class_req_var}}{{/required}}{{^required}}{{>data_class_opt_var}}{{/required}}{{^-last}},{{/-last}}
 
 {{/allVars}}
-){{/discriminator}}{{#parent}}{{^serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#kotlinx_serialization}}(){{/kotlinx_serialization}}{{#multiplatform}}(){{/multiplatform}}{{#isArray}}(){{/isArray}}{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{^serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{^parcelizeModels}} : Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{^serializableModel}}{{#parcelizeModels}} : Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{#parcelizeModels}} : Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#generateRoomModels}}{{#parent}}, {{/parent}}{{^discriminator}}{{^parent}}:{{/parent}} ITransformForStorage<{{classname}}RoomModel>{{/discriminator}}{{/generateRoomModels}}{{#vendorExtensions.x-has-data-class-body}} {
+){{/discriminator}}{{#parent}}{{^serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#kotlinx_serialization}}(){{/kotlinx_serialization}}{{#multiplatform}}(){{/multiplatform}}{{#isArray}}(){{/isArray}}{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{^serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{^parcelizeModels}} : Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{^serializableModel}}{{#parcelizeModels}} : Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{#parcelizeModels}} : Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#generateRoomModels}}{{#parent}}, {{/parent}}{{^discriminator}}{{^parent}}:{{/parent}} ITransformForStorage<{{classname}}RoomModel>{{/discriminator}}{{/generateRoomModels}}{{#vendorExtensions.x-unknown-case-checkable}}{{{vendorExtensions.x-unknown-case-checkable-prefix}}}{{packageName}}.infrastructure.UnknownCaseCheckable{{/vendorExtensions.x-unknown-case-checkable}}{{#vendorExtensions.x-has-data-class-body}} {
 {{/vendorExtensions.x-has-data-class-body}}
 {{#generateRoomModels}}
     companion object { }
@@ -149,7 +152,7 @@ import {{packageName}}.infrastructure.ITransformForStorage
     {{#multiplatform}}
     @Serializable
     {{/multiplatform}}
-    {{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}enum class {{{nameInPascalCase}}}({{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}{{#jackson}}@get:JsonValue {{/jackson}}val value: {{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}{{#mostInnerItems}}{{dataType}}{{/mostInnerItems}}{{/isContainer}}) {
+    {{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}enum class {{{nameInPascalCase}}}({{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}{{#jackson}}@get:JsonValue {{/jackson}}val value: {{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}{{#mostInnerItems}}{{dataType}}{{/mostInnerItems}}{{/isContainer}}){{#unknownCaseCheckable}} : {{packageName}}.infrastructure.UnknownCaseCheckable{{/unknownCaseCheckable}} {
     {{#allowableValues}}
     {{#enumVars}}
         {{^multiplatform}}
@@ -171,6 +174,15 @@ import {{packageName}}.infrastructure.ITransformForStorage
         {{/multiplatform}}
     {{/enumVars}}
     {{/allowableValues}}
+{{#unknownCaseCheckable}}
+
+        /**
+         * True when this value is the synthetic unknown default case that unknown
+         * enum values are mapped to during deserialization.
+         */
+        override val containsUnknownDefaultOpenApiCase: kotlin.Boolean
+            get() = this == {{#allowableValues}}{{#enumVars}}{{#-last}}{{&name}}{{/-last}}{{/enumVars}}{{/allowableValues}}
+{{/unknownCaseCheckable}}
     }
     {{#kotlinx_serialization}}
     {{#enumUnknownDefaultCase}}
@@ -193,6 +205,23 @@ import {{packageName}}.infrastructure.ITransformForStorage
 {{/isEnum}}
 {{/vars}}
 {{/hasEnums}}
+{{#vendorExtensions.x-unknown-case-checkable}}
+
+    /**
+     * True when any enum property (or enum item of an array property) of this model
+     * holds the synthetic unknown default case that unknown enum values are mapped
+     * to during deserialization.
+     */
+    override val containsUnknownDefaultOpenApiCase: kotlin.Boolean
+        get() {
+{{#allVars}}
+{{#vendorExtensions.x-unknown-case-checkable-var}}
+            if ({{{name}}}.containsUnknownDefaultOpenApiCase()) return true
+{{/vendorExtensions.x-unknown-case-checkable-var}}
+{{/allVars}}
+            return false
+        }
+{{/vendorExtensions.x-unknown-case-checkable}}
 {{#generateOneOfAnyOfWrappers}}
     {{#gson}}
 

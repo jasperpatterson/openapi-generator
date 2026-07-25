@@ -66,6 +66,11 @@ import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 {{/discriminator}}
+{{^discriminator}}
+{{#unknownCaseCheckable}}
+import {{packageName}}.infrastructure.containsUnknownDefaultOpenApiCase
+{{/unknownCaseCheckable}}
+{{/discriminator}}
 {{/generateOneOfAnyOfWrappers}}
 {{#hasEnums}}
 {{/hasEnums}}
@@ -237,6 +242,9 @@ import java.io.IOException
         if (jsonElement is JsonArray) {
             try {
                 val instance = jsonDecoder.json.decodeFromJsonElement<{{{dataType}}}>(jsonElement)
+                {{#unknownCaseCheckable}}
+                require(!instance.containsUnknownDefaultOpenApiCase()) { "value contains unknown default enum case" }
+                {{/unknownCaseCheckable}}
                 return {{classname}}.{{#fnToValueClassName}}{{{dataType}}}{{/fnToValueClassName}}(instance)
             } catch (e: Exception) {
                 errorMessages.add("Failed to deserialize as {{{dataType}}}: ${e.message}")
@@ -270,6 +278,9 @@ import java.io.IOException
         if (jsonElement !is JsonPrimitive) {
             try {
                 val instance = jsonDecoder.json.decodeFromJsonElement<{{{dataType}}}>(jsonElement)
+                {{#unknownCaseCheckable}}
+                require(!instance.containsUnknownDefaultOpenApiCase()) { "value contains unknown default enum case" }
+                {{/unknownCaseCheckable}}
                 return {{classname}}.{{#fnToValueClassName}}{{{dataType}}}{{/fnToValueClassName}}(instance)
             } catch (e: Exception) {
                 errorMessages.add("Failed to deserialize as {{{dataType}}}: ${e.message}")

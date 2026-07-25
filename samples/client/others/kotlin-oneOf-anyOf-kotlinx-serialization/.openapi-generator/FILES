@@ -4,6 +4,7 @@ docs/AnyOfUserOrPet.md
 docs/AnyOfUserOrPetOrArrayString.md
 docs/BooleanOrLong.md
 docs/Pet.md
+docs/PetKind.md
 docs/StringOrLong.md
 docs/TestApi.md
 docs/User.md
@@ -32,10 +33,12 @@ src/main/kotlin/org/openapitools/client/infrastructure/StringBuilderAdapter.kt
 src/main/kotlin/org/openapitools/client/infrastructure/URIAdapter.kt
 src/main/kotlin/org/openapitools/client/infrastructure/URLAdapter.kt
 src/main/kotlin/org/openapitools/client/infrastructure/UUIDAdapter.kt
+src/main/kotlin/org/openapitools/client/infrastructure/UnknownCaseCheckable.kt
 src/main/kotlin/org/openapitools/client/models/AnyOfUserOrPet.kt
 src/main/kotlin/org/openapitools/client/models/AnyOfUserOrPetOrArrayString.kt
 src/main/kotlin/org/openapitools/client/models/BooleanOrLong.kt
 src/main/kotlin/org/openapitools/client/models/Pet.kt
+src/main/kotlin/org/openapitools/client/models/PetKind.kt
 src/main/kotlin/org/openapitools/client/models/StringOrLong.kt
 src/main/kotlin/org/openapitools/client/models/User.kt
 src/main/kotlin/org/openapitools/client/models/UserOrPet.kt
