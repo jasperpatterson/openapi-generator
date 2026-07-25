@@ -42,6 +42,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
+import org.openapitools.client.infrastructure.containsUnknownDefaultOpenApiCase
 
 /**
  * 

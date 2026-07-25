@@ -42,6 +42,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
+import org.openapitools.client.infrastructure.containsUnknownDefaultOpenApiCase
 
 /**
  * 
@@ -55,6 +56,9 @@ sealed interface FloatOrInt {
     @JvmInline
     value class IntValue(val value: kotlin.Int) : FloatOrInt
 
+    @JvmInline
+    value class UnknownDefaultOpenApi(val value: JsonElement) : FloatOrInt
+
 }
 
 object FloatOrIntSerializer : KSerializer<FloatOrInt> {
@@ -66,6 +70,7 @@ object FloatOrIntSerializer : KSerializer<FloatOrInt> {
         when (value) {
             is FloatOrInt.FloatValue -> jsonEncoder.encodeFloat(value.value)
             is FloatOrInt.IntValue -> jsonEncoder.encodeInt(value.value)
+            is FloatOrInt.UnknownDefaultOpenApi -> jsonEncoder.encodeJsonElement(value.value)
         }
     }
 
@@ -92,7 +97,7 @@ object FloatOrIntSerializer : KSerializer<FloatOrInt> {
             }
         }
 
-        throw SerializationException("Cannot deserialize FloatOrInt. Tried: ${errorMessages.joinToString(", ")}")
+        return FloatOrInt.UnknownDefaultOpenApi(jsonElement)
     }
 }
 

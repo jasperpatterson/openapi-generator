@@ -42,6 +42,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
+import org.openapitools.client.infrastructure.containsUnknownDefaultOpenApiCase
 
 /**
  * 
@@ -55,6 +56,9 @@ sealed interface NumberOrString {
     @JvmInline
     value class StringValue(val value: kotlin.String) : NumberOrString
 
+    @JvmInline
+    value class UnknownDefaultOpenApi(val value: JsonElement) : NumberOrString
+
 }
 
 object NumberOrStringSerializer : KSerializer<NumberOrString> {
@@ -66,6 +70,7 @@ object NumberOrStringSerializer : KSerializer<NumberOrString> {
         when (value) {
             is NumberOrString.BigDecimalValue -> jsonEncoder.encodeJsonElement(jsonEncoder.json.encodeToJsonElement(value.value))
             is NumberOrString.StringValue -> jsonEncoder.encodeString(value.value)
+            is NumberOrString.UnknownDefaultOpenApi -> jsonEncoder.encodeJsonElement(value.value)
         }
     }
 
@@ -92,7 +97,7 @@ object NumberOrStringSerializer : KSerializer<NumberOrString> {
             }
         }
 
-        throw SerializationException("Cannot deserialize NumberOrString. Tried: ${errorMessages.joinToString(", ")}")
+        return NumberOrString.UnknownDefaultOpenApi(jsonElement)
     }
 }
 

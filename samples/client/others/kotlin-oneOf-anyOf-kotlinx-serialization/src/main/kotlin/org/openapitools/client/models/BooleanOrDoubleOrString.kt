@@ -42,6 +42,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
+import org.openapitools.client.infrastructure.containsUnknownDefaultOpenApiCase
 
 /**
  * 
@@ -58,6 +59,9 @@ sealed interface BooleanOrDoubleOrString {
     @JvmInline
     value class StringValue(val value: kotlin.String) : BooleanOrDoubleOrString
 
+    @JvmInline
+    value class UnknownDefaultOpenApi(val value: JsonElement) : BooleanOrDoubleOrString
+
 }
 
 object BooleanOrDoubleOrStringSerializer : KSerializer<BooleanOrDoubleOrString> {
@@ -70,6 +74,7 @@ object BooleanOrDoubleOrStringSerializer : KSerializer<BooleanOrDoubleOrString> 
             is BooleanOrDoubleOrString.BooleanValue -> jsonEncoder.encodeBoolean(value.value)
             is BooleanOrDoubleOrString.DoubleValue -> jsonEncoder.encodeDouble(value.value)
             is BooleanOrDoubleOrString.StringValue -> jsonEncoder.encodeString(value.value)
+            is BooleanOrDoubleOrString.UnknownDefaultOpenApi -> jsonEncoder.encodeJsonElement(value.value)
         }
     }
 
@@ -104,7 +109,7 @@ object BooleanOrDoubleOrStringSerializer : KSerializer<BooleanOrDoubleOrString> 
             }
         }
 
-        throw SerializationException("Cannot deserialize BooleanOrDoubleOrString. Tried: ${errorMessages.joinToString(", ")}")
+        return BooleanOrDoubleOrString.UnknownDefaultOpenApi(jsonElement)
     }
 }
 
