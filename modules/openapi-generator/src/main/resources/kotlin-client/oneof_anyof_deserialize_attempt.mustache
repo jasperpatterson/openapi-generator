@@ -1,0 +1,6 @@
+            try {
+                val instance = jsonDecoder.json.decodeFromJsonElement<{{{dataType}}}>(jsonElement)
+                return {{classname}}.{{#fnToValueClassName}}{{{dataType}}}{{/fnToValueClassName}}(instance)
+            } catch (e: Exception) {
+                errorMessages.add("Failed to deserialize as {{{dataType}}}: ${e.message}")
+            }

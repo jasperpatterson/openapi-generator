@@ -36,13 +36,17 @@ import kotlinx.serialization.json.*
                 {{#isInteger}}
                 is kotlin.Int -> jsonEncoder.encodeInt(instance)
                 {{/isInteger}}
-                {{#isNumber}}
+                {{#isLong}}
+                is kotlin.Long -> jsonEncoder.encodeLong(instance)
+                {{/isLong}}
                 {{#isDouble}}
                 is kotlin.Double -> jsonEncoder.encodeDouble(instance)
                 {{/isDouble}}
                 {{#isFloat}}
                 is kotlin.Float -> jsonEncoder.encodeFloat(instance)
                 {{/isFloat}}
+                {{#isNumber}}
+                is kotlin.Double -> jsonEncoder.encodeDouble(instance)
                 {{/isNumber}}
                 {{/isPrimitiveType}}
                 {{^isPrimitiveType}}

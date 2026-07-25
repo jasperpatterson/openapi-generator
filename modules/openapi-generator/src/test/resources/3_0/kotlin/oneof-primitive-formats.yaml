@@ -1,0 +1,35 @@
+openapi: 3.0.3
+info:
+  title: oneOf with primitive format members
+  description: Test oneOf wrappers whose members are format-qualified primitives mapping to non-@Serializable platform types
+  version: '0.1'
+paths: {}
+components:
+  schemas:
+    DateOrBoolean:
+      oneOf:
+        - type: string
+          format: date
+        - type: boolean
+    DateTimeOrBoolean:
+      oneOf:
+        - type: string
+          format: date-time
+        - type: boolean
+    UuidOrBoolean:
+      oneOf:
+        - type: string
+          format: uuid
+        - type: boolean
+    ByteArrayOrBoolean:
+      oneOf:
+        - type: string
+          format: byte
+        - type: boolean
+    Color:
+      type: string
+      enum: [red, green, blue]
+    EnumOrBoolean:
+      oneOf:
+        - $ref: '#/components/schemas/Color'
+        - type: boolean

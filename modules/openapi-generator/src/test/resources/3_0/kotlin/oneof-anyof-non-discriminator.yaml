@@ -56,6 +56,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BooleanOrLong'
+  '/v1/test/oneOfDoublePrimitive':
+    get:
+      tags:
+        - test
+      operationId: get-oneOf-double-primitive
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BooleanOrDoubleOrString'
+  '/v1/test/oneOfFloatIntPrimitive':
+    get:
+      tags:
+        - test
+      operationId: get-oneOf-float-int-primitive
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FloatOrInt'
+  '/v1/test/oneOfNumberPrimitive':
+    get:
+      tags:
+        - test
+      operationId: get-oneOf-number-primitive
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NumberOrString'
+  '/v1/test/anyOfDoublePrimitive':
+    get:
+      tags:
+        - test
+      operationId: get-anyOf-double-primitive
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnyOfBooleanOrDoubleOrString'
   '/v1/test/anyOf':
     get:
       tags:
@@ -125,6 +173,28 @@ components:
         - type: boolean
         - type: integer
           format: int64
+    BooleanOrDoubleOrString:
+      oneOf:
+        - type: boolean
+        - type: number
+          format: double
+        - type: string
+    FloatOrInt:
+      oneOf:
+        - type: number
+          format: float
+        - type: integer
+          format: int32
+    NumberOrString:
+      oneOf:
+        - type: number
+        - type: string
+    AnyOfBooleanOrDoubleOrString:
+      anyOf:
+        - type: boolean
+        - type: number
+          format: double
+        - type: string
     AnyOfUserOrPet:
       anyOf:
         - $ref: '#/components/schemas/User'

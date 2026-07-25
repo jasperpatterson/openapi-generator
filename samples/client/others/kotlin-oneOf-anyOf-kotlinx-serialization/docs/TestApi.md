@@ -6,9 +6,13 @@ All URIs are relative to *http://example.org*
 | ------------- | ------------- | ------------- |
 | [**getAnyOf**](TestApi.md#getAnyOf) | **GET** v1/test/anyOf |  |
 | [**getAnyOfArray**](TestApi.md#getAnyOfArray) | **GET** v1/test/anyOfArray |  |
+| [**getAnyOfDoublePrimitive**](TestApi.md#getAnyOfDoublePrimitive) | **GET** v1/test/anyOfDoublePrimitive |  |
 | [**getOneOf**](TestApi.md#getOneOf) | **GET** v1/test/oneOf |  |
 | [**getOneOfArray**](TestApi.md#getOneOfArray) | **GET** v1/test/oneOfArray |  |
 | [**getOneOfBooleanPrimitive**](TestApi.md#getOneOfBooleanPrimitive) | **GET** v1/test/oneOfBooleanPrimitive |  |
+| [**getOneOfDoublePrimitive**](TestApi.md#getOneOfDoublePrimitive) | **GET** v1/test/oneOfDoublePrimitive |  |
+| [**getOneOfFloatIntPrimitive**](TestApi.md#getOneOfFloatIntPrimitive) | **GET** v1/test/oneOfFloatIntPrimitive |  |
+| [**getOneOfNumberPrimitive**](TestApi.md#getOneOfNumberPrimitive) | **GET** v1/test/oneOfNumberPrimitive |  |
 | [**getOneOfPrimitive**](TestApi.md#getOneOfPrimitive) | **GET** v1/test/oneOfPrimitive |  |
 
 
@@ -66,6 +70,38 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**AnyOfUserOrPetOrArrayString**](AnyOfUserOrPetOrArrayString.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+
+
+### Example
+```kotlin
+// Import classes:
+//import org.openapitools.client.*
+//import org.openapitools.client.infrastructure.*
+//import org.openapitools.client.models.*
+
+val apiClient = ApiClient()
+val webService = apiClient.createWebservice(TestApi::class.java)
+
+val result : AnyOfBooleanOrDoubleOrString = webService.getAnyOfDoublePrimitive()
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**AnyOfBooleanOrDoubleOrString**](AnyOfBooleanOrDoubleOrString.md)
 
 ### Authorization
 
@@ -162,6 +198,102 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**BooleanOrLong**](BooleanOrLong.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+
+
+### Example
+```kotlin
+// Import classes:
+//import org.openapitools.client.*
+//import org.openapitools.client.infrastructure.*
+//import org.openapitools.client.models.*
+
+val apiClient = ApiClient()
+val webService = apiClient.createWebservice(TestApi::class.java)
+
+val result : BooleanOrDoubleOrString = webService.getOneOfDoublePrimitive()
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**BooleanOrDoubleOrString**](BooleanOrDoubleOrString.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+
+
+### Example
+```kotlin
+// Import classes:
+//import org.openapitools.client.*
+//import org.openapitools.client.infrastructure.*
+//import org.openapitools.client.models.*
+
+val apiClient = ApiClient()
+val webService = apiClient.createWebservice(TestApi::class.java)
+
+val result : FloatOrInt = webService.getOneOfFloatIntPrimitive()
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**FloatOrInt**](FloatOrInt.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+
+
+### Example
+```kotlin
+// Import classes:
+//import org.openapitools.client.*
+//import org.openapitools.client.infrastructure.*
+//import org.openapitools.client.models.*
+
+val apiClient = ApiClient()
+val webService = apiClient.createWebservice(TestApi::class.java)
+
+val result : NumberOrString = webService.getOneOfNumberPrimitive()
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**NumberOrString**](NumberOrString.md)
 
 ### Authorization
 

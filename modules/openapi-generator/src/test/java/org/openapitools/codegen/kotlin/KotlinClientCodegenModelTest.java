@@ -740,6 +740,10 @@ public class KotlinClientCodegenModelTest {
     }
 
     private File generateKotlinxOneOfAnyOf(Map<String, Object> extraProps) throws IOException {
+        return generateKotlinxOneOfAnyOf("src/test/resources/3_0/issue_19942.json", extraProps);
+    }
+
+    private File generateKotlinxOneOfAnyOf(String inputSpec, Map<String, Object> extraProps) throws IOException {
         File output = Files.createTempDirectory("test").toFile();
         output.deleteOnExit();
         Map<String, Object> props = new HashMap<>();
@@ -751,7 +755,7 @@ public class KotlinClientCodegenModelTest {
                         .setGeneratorName("kotlin")
                         .setLibrary("jvm-retrofit2")
                         .setAdditionalProperties(props)
-                        .setInputSpec("src/test/resources/3_0/issue_19942.json")
+                        .setInputSpec(inputSpec)
                         .setOutputDir(output.getAbsolutePath().replace("\\", "/"))
                         .toClientOptInput())
                 .generate();
@@ -1136,6 +1140,100 @@ public class KotlinClientCodegenModelTest {
         // is auto-renamed to a backtick-escaped identifier
         TestUtils.assertFileContains(itemModel,
                 "@param:JsonProperty(\"2nd_field\")\n    @get:JsonProperty(\"2nd_field\")\n    val `2ndField`");
+    }
+
+    @Test(description = "oneOf/anyOf wrapper serializers must handle numeric primitive members (double/float/int/long/number)")
+    public void testKotlinxSerializationOneOfWrapperNumericPrimitives() throws IOException {
+        File output = generateKotlinxOneOfAnyOf("src/test/resources/3_0/kotlin/oneof-anyof-non-discriminator.yaml",
+                new HashMap<>() {{ put("omitGradleWrapper", true); }});
+
+        // number + format => dedicated encoder branch for every member (previously the
+        // isDouble/isFloat branches never rendered and the generated `when` did not compile)
+        TestUtils.assertFileContains(modelPath(output, "BooleanOrDoubleOrString"),
+                "is BooleanOrDoubleOrString.BooleanValue -> jsonEncoder.encodeBoolean(value.value)",
+                "is BooleanOrDoubleOrString.DoubleValue -> jsonEncoder.encodeDouble(value.value)",
+                "is BooleanOrDoubleOrString.StringValue -> jsonEncoder.encodeString(value.value)");
+        TestUtils.assertFileContains(modelPath(output, "FloatOrInt"),
+                "is FloatOrInt.FloatValue -> jsonEncoder.encodeFloat(value.value)",
+                "is FloatOrInt.IntValue -> jsonEncoder.encodeInt(value.value)");
+        TestUtils.assertFileContains(modelPath(output, "BooleanOrLong"),
+                "is BooleanOrLong.LongValue -> jsonEncoder.encodeLong(value.value)");
+        TestUtils.assertFileContains(modelPath(output, "AnyOfBooleanOrDoubleOrString"),
+                "is AnyOfBooleanOrDoubleOrString.DoubleValue -> jsonEncoder.encodeDouble(value.value)");
+
+        // unformatted number maps to java.math.BigDecimal, which has no `.serializer()`;
+        // it must round-trip through the Json instance (contextual BigDecimalAdapter)
+        TestUtils.assertFileContains(modelPath(output, "NumberOrString"),
+                "is NumberOrString.BigDecimalValue -> jsonEncoder.encodeJsonElement(jsonEncoder.json.encodeToJsonElement(value.value))",
+                "if (jsonElement is JsonPrimitive) {");
+        TestUtils.assertFileNotContains(modelPath(output, "NumberOrString"), "java.math.BigDecimal.serializer()");
+
+        // model members keep the compile-time serializer
+        TestUtils.assertFileContains(modelPath(output, "UserOrPet"),
+                "is UserOrPet.UserValue -> jsonEncoder.encodeSerializableValue(User.serializer(), value.value)");
+    }
+
+    @Test(description = "oneOf wrapper serializers must handle string-format members mapping to platform types (date/date-time/uuid/byte)")
+    public void testKotlinxSerializationOneOfWrapperFormattedStringPrimitives() throws IOException {
+        File output = generateKotlinxOneOfAnyOf("src/test/resources/3_0/kotlin/oneof-primitive-formats.yaml",
+                new HashMap<>() {{ put("omitGradleWrapper", true); }});
+
+        // java.time.LocalDate / OffsetDateTime / UUID have no `.serializer()`; they serialize through
+        // the Json instance's contextual adapters and deserialize from string primitives
+        TestUtils.assertFileContains(modelPath(output, "DateOrBoolean"),
+                "is DateOrBoolean.LocalDateValue -> jsonEncoder.encodeJsonElement(jsonEncoder.json.encodeToJsonElement(value.value))",
+                "if (jsonElement is JsonPrimitive && jsonElement.isString) {");
+        TestUtils.assertFileNotContains(modelPath(output, "DateOrBoolean"), "java.time.LocalDate.serializer()");
+
+        TestUtils.assertFileContains(modelPath(output, "DateTimeOrBoolean"),
+                "is DateTimeOrBoolean.OffsetDateTimeValue -> jsonEncoder.encodeJsonElement(jsonEncoder.json.encodeToJsonElement(value.value))");
+        TestUtils.assertFileNotContains(modelPath(output, "DateTimeOrBoolean"), "java.time.OffsetDateTime.serializer()");
+
+        TestUtils.assertFileContains(modelPath(output, "UuidOrBoolean"),
+                "is UuidOrBoolean.UUIDValue -> jsonEncoder.encodeJsonElement(jsonEncoder.json.encodeToJsonElement(value.value))");
+        TestUtils.assertFileNotContains(modelPath(output, "UuidOrBoolean"), "java.util.UUID.serializer()");
+
+        // string+byte maps to kotlin.ByteArray (kotlinx default wire format: JSON array of numbers);
+        // previously no serialize branch rendered and the `when` did not compile
+        TestUtils.assertFileContains(modelPath(output, "ByteArrayOrBoolean"),
+                "is ByteArrayOrBoolean.ByteArrayValue -> jsonEncoder.encodeJsonElement(jsonEncoder.json.encodeToJsonElement(value.value))",
+                "if (jsonElement is JsonArray) {");
+
+        // enum references are @Serializable and keep the compile-time serializer
+        TestUtils.assertFileContains(modelPath(output, "EnumOrBoolean"),
+                "is EnumOrBoolean.ColorValue -> jsonEncoder.encodeSerializableValue(Color.serializer(), value.value)");
+    }
+
+    @Test(description = "multiplatform oneOf/anyOf wrapper serializers must handle long/double/float/number members")
+    public void testMultiplatformOneOfWrapperNumericPrimitives() throws IOException {
+        File output = Files.createTempDirectory("test").toFile();
+        String path = output.getAbsolutePath();
+        output.deleteOnExit();
+
+        final CodegenConfigurator configurator = new CodegenConfigurator()
+                .setGeneratorName("kotlin")
+                .setLibrary("multiplatform")
+                .setInputSpec("src/test/resources/3_0/kotlin/oneof-anyof-non-discriminator.yaml")
+                .addAdditionalProperty("omitGradleWrapper", true)
+                .addAdditionalProperty("dateLibrary", "string")
+                .addAdditionalProperty(GENERATE_ONEOF_ANYOF_WRAPPERS, true)
+                .setOutputDir(path.replace("\\", "/"));
+        new DefaultGenerator().opts(configurator.toClientOptInput()).generate();
+
+        // int64 members previously had no serialize branch at all and failed with a
+        // runtime SerializationException in the `else` branch
+        TestUtils.assertFileContains(Paths.get(path + "/src/commonMain/kotlin/org/openapitools/client/models/BooleanOrLong.kt"),
+                "is kotlin.Long -> jsonEncoder.encodeLong(instance)");
+        TestUtils.assertFileContains(Paths.get(path + "/src/commonMain/kotlin/org/openapitools/client/models/BooleanOrDoubleOrString.kt"),
+                "is kotlin.Double -> jsonEncoder.encodeDouble(instance)");
+        TestUtils.assertFileContains(Paths.get(path + "/src/commonMain/kotlin/org/openapitools/client/models/FloatOrInt.kt"),
+                "is kotlin.Float -> jsonEncoder.encodeFloat(instance)",
+                "is kotlin.Int -> jsonEncoder.encodeInt(instance)");
+        // unformatted number maps to kotlin.Double on multiplatform
+        TestUtils.assertFileContains(Paths.get(path + "/src/commonMain/kotlin/org/openapitools/client/models/NumberOrString.kt"),
+                "is kotlin.Double -> jsonEncoder.encodeDouble(instance)");
+        TestUtils.assertFileContains(Paths.get(path + "/src/commonMain/kotlin/org/openapitools/client/models/AnyOfBooleanOrDoubleOrString.kt"),
+                "is kotlin.Double -> jsonEncoder.encodeDouble(instance)");
     }
 
     private static class ModelNameTest {

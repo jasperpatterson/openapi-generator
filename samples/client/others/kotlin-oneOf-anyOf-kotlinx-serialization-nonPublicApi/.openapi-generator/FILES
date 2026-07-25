@@ -1,8 +1,12 @@
 README.md
 build.gradle
+docs/AnyOfBooleanOrDoubleOrString.md
 docs/AnyOfUserOrPet.md
 docs/AnyOfUserOrPetOrArrayString.md
+docs/BooleanOrDoubleOrString.md
 docs/BooleanOrLong.md
+docs/FloatOrInt.md
+docs/NumberOrString.md
 docs/Pet.md
 docs/StringOrLong.md
 docs/TestApi.md
@@ -32,9 +36,13 @@ src/main/kotlin/org/openapitools/client/infrastructure/StringBuilderAdapter.kt
 src/main/kotlin/org/openapitools/client/infrastructure/URIAdapter.kt
 src/main/kotlin/org/openapitools/client/infrastructure/URLAdapter.kt
 src/main/kotlin/org/openapitools/client/infrastructure/UUIDAdapter.kt
+src/main/kotlin/org/openapitools/client/models/AnyOfBooleanOrDoubleOrString.kt
 src/main/kotlin/org/openapitools/client/models/AnyOfUserOrPet.kt
 src/main/kotlin/org/openapitools/client/models/AnyOfUserOrPetOrArrayString.kt
+src/main/kotlin/org/openapitools/client/models/BooleanOrDoubleOrString.kt
 src/main/kotlin/org/openapitools/client/models/BooleanOrLong.kt
+src/main/kotlin/org/openapitools/client/models/FloatOrInt.kt
+src/main/kotlin/org/openapitools/client/models/NumberOrString.kt
 src/main/kotlin/org/openapitools/client/models/Pet.kt
 src/main/kotlin/org/openapitools/client/models/StringOrLong.kt
 src/main/kotlin/org/openapitools/client/models/User.kt

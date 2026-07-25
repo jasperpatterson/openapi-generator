@@ -47,18 +47,26 @@ All URIs are relative to *http://example.org*
 | ------------ | ------------- | ------------- | ------------- |
 | *TestApi* | [**getAnyOf**](docs/TestApi.md#getanyof) | **GET** v1/test/anyOf |  |
 | *TestApi* | [**getAnyOfArray**](docs/TestApi.md#getanyofarray) | **GET** v1/test/anyOfArray |  |
+| *TestApi* | [**getAnyOfDoublePrimitive**](docs/TestApi.md#getanyofdoubleprimitive) | **GET** v1/test/anyOfDoublePrimitive |  |
 | *TestApi* | [**getOneOf**](docs/TestApi.md#getoneof) | **GET** v1/test/oneOf |  |
 | *TestApi* | [**getOneOfArray**](docs/TestApi.md#getoneofarray) | **GET** v1/test/oneOfArray |  |
 | *TestApi* | [**getOneOfBooleanPrimitive**](docs/TestApi.md#getoneofbooleanprimitive) | **GET** v1/test/oneOfBooleanPrimitive |  |
+| *TestApi* | [**getOneOfDoublePrimitive**](docs/TestApi.md#getoneofdoubleprimitive) | **GET** v1/test/oneOfDoublePrimitive |  |
+| *TestApi* | [**getOneOfFloatIntPrimitive**](docs/TestApi.md#getoneoffloatintprimitive) | **GET** v1/test/oneOfFloatIntPrimitive |  |
+| *TestApi* | [**getOneOfNumberPrimitive**](docs/TestApi.md#getoneofnumberprimitive) | **GET** v1/test/oneOfNumberPrimitive |  |
 | *TestApi* | [**getOneOfPrimitive**](docs/TestApi.md#getoneofprimitive) | **GET** v1/test/oneOfPrimitive |  |
 
 
 <a id="documentation-for-models"></a>
 ## Documentation for Models
 
+ - [org.openapitools.client.models.AnyOfBooleanOrDoubleOrString](docs/AnyOfBooleanOrDoubleOrString.md)
  - [org.openapitools.client.models.AnyOfUserOrPet](docs/AnyOfUserOrPet.md)
  - [org.openapitools.client.models.AnyOfUserOrPetOrArrayString](docs/AnyOfUserOrPetOrArrayString.md)
+ - [org.openapitools.client.models.BooleanOrDoubleOrString](docs/BooleanOrDoubleOrString.md)
  - [org.openapitools.client.models.BooleanOrLong](docs/BooleanOrLong.md)
+ - [org.openapitools.client.models.FloatOrInt](docs/FloatOrInt.md)
+ - [org.openapitools.client.models.NumberOrString](docs/NumberOrString.md)
  - [org.openapitools.client.models.Pet](docs/Pet.md)
  - [org.openapitools.client.models.StringOrLong](docs/StringOrLong.md)
  - [org.openapitools.client.models.User](docs/User.md)
