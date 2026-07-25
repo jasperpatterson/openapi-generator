@@ -60,6 +60,9 @@ sealed interface UserOrPetOrArrayString {
     @JvmInline
     value class ListStringValue(val value: kotlin.collections.List<kotlin.String>) : UserOrPetOrArrayString
 
+    @JvmInline
+    value class UnknownDefaultOpenApi(val value: JsonElement) : UserOrPetOrArrayString
+
 }
 
 object UserOrPetOrArrayStringSerializer : KSerializer<UserOrPetOrArrayString> {
@@ -72,6 +75,7 @@ object UserOrPetOrArrayStringSerializer : KSerializer<UserOrPetOrArrayString> {
             is UserOrPetOrArrayString.UserValue -> jsonEncoder.encodeSerializableValue(User.serializer(), value.value)
             is UserOrPetOrArrayString.PetValue -> jsonEncoder.encodeSerializableValue(Pet.serializer(), value.value)
             is UserOrPetOrArrayString.ListStringValue -> jsonEncoder.encodeJsonElement(jsonEncoder.json.encodeToJsonElement(value.value))
+            is UserOrPetOrArrayString.UnknownDefaultOpenApi -> jsonEncoder.encodeJsonElement(value.value)
         }
     }
 
@@ -106,7 +110,7 @@ object UserOrPetOrArrayStringSerializer : KSerializer<UserOrPetOrArrayString> {
             }
         }
 
-        throw SerializationException("Cannot deserialize UserOrPetOrArrayString. Tried: ${errorMessages.joinToString(", ")}")
+        return UserOrPetOrArrayString.UnknownDefaultOpenApi(jsonElement)
     }
 }
 

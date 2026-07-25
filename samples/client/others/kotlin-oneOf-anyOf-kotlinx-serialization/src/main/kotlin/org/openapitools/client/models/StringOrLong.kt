@@ -55,6 +55,9 @@ sealed interface StringOrLong {
     @JvmInline
     value class LongValue(val value: kotlin.Long) : StringOrLong
 
+    @JvmInline
+    value class UnknownDefaultOpenApi(val value: JsonElement) : StringOrLong
+
 }
 
 object StringOrLongSerializer : KSerializer<StringOrLong> {
@@ -66,6 +69,7 @@ object StringOrLongSerializer : KSerializer<StringOrLong> {
         when (value) {
             is StringOrLong.StringValue -> jsonEncoder.encodeString(value.value)
             is StringOrLong.LongValue -> jsonEncoder.encodeLong(value.value)
+            is StringOrLong.UnknownDefaultOpenApi -> jsonEncoder.encodeJsonElement(value.value)
         }
     }
 
@@ -92,7 +96,7 @@ object StringOrLongSerializer : KSerializer<StringOrLong> {
             }
         }
 
-        throw SerializationException("Cannot deserialize StringOrLong. Tried: ${errorMessages.joinToString(", ")}")
+        return StringOrLong.UnknownDefaultOpenApi(jsonElement)
     }
 }
 

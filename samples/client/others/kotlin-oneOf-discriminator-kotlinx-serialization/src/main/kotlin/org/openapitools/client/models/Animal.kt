@@ -56,6 +56,9 @@ sealed interface Animal {
     @JvmInline
      value class RobobirdWrapper(val value: Robobird) : Animal
 
+    @JvmInline
+     value class UnknownDefaultOpenApi(val value: JsonObject) : Animal
+
 }
 
 object AnimalSerializer : KSerializer<Animal> {
@@ -74,6 +77,7 @@ object AnimalSerializer : KSerializer<Animal> {
                 jsonMap["discriminator"] = JsonPrimitive("ROBOBIRD")
                 JsonObject(jsonMap)
             }
+            is Animal.UnknownDefaultOpenApi -> value.value
         }
         encoder.encodeJsonElement(jsonObject)
     }
@@ -94,7 +98,7 @@ object AnimalSerializer : KSerializer<Animal> {
                 val decoded = decoder.json.decodeFromJsonElement(Robobird.serializer(), element)
                 Animal.RobobirdWrapper(decoded)
             }
-            else -> throw SerializationException("Unknown Animal discriminator: $discriminatorValue")
+            else -> Animal.UnknownDefaultOpenApi(element)
         }
     }
 }

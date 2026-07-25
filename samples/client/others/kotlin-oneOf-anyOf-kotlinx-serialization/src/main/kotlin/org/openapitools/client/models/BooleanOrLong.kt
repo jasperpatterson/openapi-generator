@@ -55,6 +55,9 @@ sealed interface BooleanOrLong {
     @JvmInline
     value class LongValue(val value: kotlin.Long) : BooleanOrLong
 
+    @JvmInline
+    value class UnknownDefaultOpenApi(val value: JsonElement) : BooleanOrLong
+
 }
 
 object BooleanOrLongSerializer : KSerializer<BooleanOrLong> {
@@ -66,6 +69,7 @@ object BooleanOrLongSerializer : KSerializer<BooleanOrLong> {
         when (value) {
             is BooleanOrLong.BooleanValue -> jsonEncoder.encodeBoolean(value.value)
             is BooleanOrLong.LongValue -> jsonEncoder.encodeLong(value.value)
+            is BooleanOrLong.UnknownDefaultOpenApi -> jsonEncoder.encodeJsonElement(value.value)
         }
     }
 
@@ -92,7 +96,7 @@ object BooleanOrLongSerializer : KSerializer<BooleanOrLong> {
             }
         }
 
-        throw SerializationException("Cannot deserialize BooleanOrLong. Tried: ${errorMessages.joinToString(", ")}")
+        return BooleanOrLong.UnknownDefaultOpenApi(jsonElement)
     }
 }
 
